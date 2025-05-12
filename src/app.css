@@ -31,6 +31,10 @@ body {
 	/* Light blue shadow on focus */
 }
 
+*::-webkit-scrollbar {
+	display: none;
+}
+
 /* --------------------- SECTIONS CONTAINER --------------------- */
 button {
 	@apply cursor-pointer;

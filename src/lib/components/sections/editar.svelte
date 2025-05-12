@@ -10,7 +10,7 @@
 </script>
 
 <section class="section editar">
-	<button type="button" onclick={handleClick}>
+	<button type="button" onclick={handleClick} title="Editar producto.">
 		<img src={edit} alt="Edit icon" class="section-button__icon" />
 	</button>
 </section>

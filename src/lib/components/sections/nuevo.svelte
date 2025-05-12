@@ -9,7 +9,7 @@
 </script>
 
 <section class="section nuevo">
-    <button type="button" onclick={handleClick} class="section-button">
+    <button type="button" onclick={handleClick} class="section-button" title="Registrar nuevo producto.">
         <img src={add} alt="Add icon" class="section-button__icon" />
     </button>
 </section>

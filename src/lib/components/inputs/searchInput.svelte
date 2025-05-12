@@ -41,7 +41,7 @@
 	});
 </script>
 
-<form class="input-with-icon__container input-with-icon__container--large" transition:slide>
+<form class="input-with-icon__container input-with-icon__container--large" transition:slide title="Buscar producto.">
 	<button class="input-with-icon__button" type="button">
 		<img src={search} alt="Search icon" class="input-with-icon__icon" />
 	</button>
