@@ -1,0 +1,8 @@
+export { default as search } from "./search.svg"
+export { default as add } from "./add.svg"
+export { default as dollar } from "./dollar.svg"
+export { default as close } from "./close.svg"
+export { default as packageImport } from "./packageImport.svg"
+export { default as packageExport } from "./packageExport.svg"
+export { default as fileSearch } from "./fileSearch.svg"
+export { default as edit } from "./edit.svg"

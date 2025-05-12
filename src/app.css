@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+body {
+	@apply bg-black;
+}
+
+
+/* Custom Colors */
+:root {
+	--dark: #1c1c1c;
+	--mid-dark: #2424243a;
+	--highlight: #ff7b24;
+	/* Vibrant Orange */
+	--highlight-semi: #ff6a0630;
+	/* Vibrant Orange */
+	--highlight-dark: #ff6a0624;
+	/* Vibrant Orange */
+
+	/* New color variables for the search input */
+	--input-bg: #f5f5f5;
+	/* Light gray background */
+	--input-border: #d1d1d1;
+	/* Subtle gray border */
+	--input-focus-border: #007bff;
+	/* Blue border on focus */
+	--input-placeholder: #a1a1a1;
+	/* Light gray placeholder text */
+	--input-text: #333333;
+	/* Dark gray text */
+	--input-focus-shadow: rgba(0, 123, 255, 0.2);
+	/* Light blue shadow on focus */
+}
+
+/* --------------------- SECTIONS CONTAINER --------------------- */
+button {
+	@apply cursor-pointer;
+}
+
+/* --------------------- SECTIONS CONTAINER --------------------- */
+.sections-container {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: repeat(6, 1fr);
+	grid-template-areas:
+		"buscar buscar buscar nuevo"
+		"display display display display"
+		"display display display display"
+		"display display display display"
+		"display display display display"
+		"display display display display";
+	height: 100%;
+	width: 100%;
+}
+
+.sections-container--product-display {
+	grid-template-areas:
+		"buscar buscar buscar nuevo"
+		"display display display display"
+		"display display display display"
+		"display display display display"
+		"display display display display"
+		"editar editar ingreso  egreso";
+}
+
+.buscar {
+	grid-area: buscar;
+}
+
+.nuevo {
+	grid-area: nuevo;
+}
+
+.editar {
+	grid-area: editar;
+}
+
+.ingreso {
+	grid-area: ingreso;
+}
+
+.egreso {
+	grid-area: egreso;
+}
+
+.display {
+	grid-area: display;
+}
+
+.acciones {
+	grid-area: acciones;
+}
+
+.estadisticas {
+	grid-area: estadisticas;
+}
+
+
+
+
+/* --------------------- SECTIONS --------------------- */
+.section {
+	@apply flex h-full min-h-full w-full items-center p-2 backdrop-brightness-150 justify-center rounded-xl text-xl font-bold transition-all duration-300 ease-in-out;
+	border: solid 2px var(--highlight-semi);
+}
+
+/* # Section Button # */
+.section-button {
+	@apply relative flex items-center justify-center p-5 rounded-xl not-last:transition-transform duration-300 hover:scale-110;
+}
+
+.section-button__icon {
+	@apply h-7 w-7;
+}
+
+/* # Section Inputs # */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+	appearance: none;
+	margin: 0;
+}
+
+/* Input */
+.input {
+	@apply px-4 h-10 max-w-32 w-full rounded-full text-sm border border-white shadow outline-none transition-all duration-300 box-border;
+}
+
+.input--large {
+	@apply max-w-80;
+}
+
+/* Input With Icon */
+.input-with-icon__container {
+	@apply flex gap-2 px-3 h-10 max-w-32 w-full rounded-full text-sm shadow outline-none transition-all duration-300 box-border;
+	border: 1px solid white;
+}
+
+.input-with-icon__container--large {
+	@apply max-w-96;
+}
+
+.input-with-icon__input {
+	@apply h-full w-full outline-none font-normal appearance-none px-2;
+}
+
+.input-with-icon__input::placeholder {
+	color: var(--input-placeholder);
+}
+
+.input-with-icon__button {
+	@apply h-full min-w-8 w-8 flex items-center p-1 box-border;
+}
+
+.input-with-icon__icon {
+	@apply h-full w-full;
+}
+
+/* Number */
+
+
+/* --------------------- BACKGROUND --------------------- */
+.bg-animated-lights {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	filter: blur(100px);
+	background: radial-gradient(circle, var(--highlight-dark) 5%, transparent 20%);
+	background-size: 400% 400%;
+	/* Even larger background size for more irregular movement */
+	animation: moveLights 50s infinite linear;
+	/* Faster animation for more noticeable movement */
+}
+
+@keyframes moveLights {
+	0% {
+		background-position: 50% 50%;
+		filter: brightness(0.6);
+		/* Dimmer at the start */
+	}
+
+	10% {
+		background-position: 55% 45%;
+		/* Slight movement towards top-left */
+		filter: brightness(0.65);
+		/* Slightly brighter */
+	}
+
+	20% {
+		background-position: 50% 60%;
+		/* Slight movement downward */
+		filter: brightness(0.75);
+		/* A bit brighter */
+	}
+
+	30% {
+		background-position: 45% 55%;
+		/* Slight movement towards bottom-left */
+		filter: brightness(0.9);
+		/* Brighter */
+	}
+
+	40% {
+		background-position: 60% 50%;
+		/* Slight movement towards the right */
+		filter: brightness(1);
+		/* Full brightness */
+	}
+
+	50% {
+		background-position: 50% 45%;
+		/* Slight movement upward */
+		filter: brightness(0.85);
+		/* Slightly dimmer */
+	}
+
+	60% {
+		background-position: 55% 50%;
+		/* Slight movement towards the right */
+		filter: brightness(0.95);
+		/* Slightly brighter */
+	}
+
+	70% {
+		background-position: 50% 40%;
+		/* Slight movement upward */
+		filter: brightness(0.9);
+		/* Dimmed */
+	}
+
+	80% {
+		background-position: 45% 50%;
+		/* Slight movement towards left */
+		filter: brightness(0.8);
+		/* Dimmed again */
+	}
+
+	90% {
+		background-position: 50% 55%;
+		/* Slight movement downward */
+		filter: brightness(0.85);
+		/* Slightly dimmer */
+	}
+
+	100% {
+		background-position: 50% 50%;
+		/* Back to center */
+		filter: brightness(0.6);
+		/* Dimmed at the end */
+	}
+}
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+	.sections-container {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			'ingreso'
+			'stock'
+			'venta'
+			'nuevo';
+	}
+}
