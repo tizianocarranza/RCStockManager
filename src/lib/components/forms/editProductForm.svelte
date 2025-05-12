@@ -37,12 +37,12 @@
 </script>
 
 <div class="h-full w-full flex flex-col p-5 gap-10" in:slide>
-	<h1 class="inline-block p-2 pb-5 border-b text-4xl">
+	<h1 class="hidden lg:inline-blockp-2 pb-5 border-b text-4xl">
 		Editar {selectedType}
 	</h1>
 
 	<form
-		class="flex gap-10 w-full h-3/4 justify-between rounded"
+		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-3/4 justify-between rounded"
 		method="post"
 		action="?/editProduct"
 		onsubmit={handleSubmit}

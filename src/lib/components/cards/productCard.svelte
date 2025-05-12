@@ -8,7 +8,7 @@
 
 <div class="flex h-full w-full gap-20">
 	<div
-		class="flex flex-col flex-wrap justify-between w-1/2 p-8 gap-10 bg-gray-500/20 rounded-lg shadow-lg border border-gray-300 hover:bg-gray-500/30 transition-all duration-300 h-auto text-gray-200 overflow-hidden"
+		class="flex flex-col flex-wrap justify-between w-full lg:w-1/2 p-8 gap-10 bg-gray-500/20 rounded-lg shadow-lg border border-gray-300 hover:bg-gray-500/30 transition-all duration-300 h-auto text-gray-200 overflow-hidden"
 	>
 		<div class="relative flex flex-col gap-1 justify-center items-center w-full border-b pb-5">
 			<div class="absolute top-0 left-0 bold self-start {product.cantidad < 2 ? "text-red-300 animate-pulse" : product.cantidad < 3 ? "text-yellow-200" : "text-green-200"}">
@@ -61,7 +61,7 @@
 	</div>
 
 	<!-- Product Dimensions -->
-	<div class="relative h-full w-1/2 p-2 text-xs">
+	<div class="hidden lg:block relative h-full w-1/2 p-2 text-xs">
 		{#if product.dimensiones}
 			<div
 				class="relative pl-5 pb-5 font-light border-l border-b border-dashed h-full w-full overflow-hidden"
