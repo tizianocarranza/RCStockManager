@@ -64,7 +64,8 @@
 			{#if selectedType === 'Panel'}
 				<datalist id="filas">
 					<option value="Supertubular">Supertubular</option>
-					<option value="Convencional">Convencional</option>
+					<option value="Aletado">Aletado</option>
+					<option value="Rizado">Rizado</option>
 				</datalist>
 				<div class="flex gap-5" transition:slide>
 					<input
@@ -94,7 +95,7 @@
 		</div>
 		<button
 			type="submit"
-			class="font-normal text-sm px-10 py-2 border rounded-full self-end hover:scale-105 hover:animate-none transition-transform animate-pulse"
+			class="font-normal text-sm px-10 py-2 border rounded-full self-end hover:animate-none animate-pulse"
 			>Guardar</button
 		>
 	</form>

@@ -133,7 +133,8 @@
 			{#if selectedType === 'Panel'}
 				<datalist id="filas">
 					<option value="Supertubular">Supertubular</option>
-					<option value="Convencional">Convencional</option>
+					<option value="Aletado">Aletado</option>
+					<option value="Rizado">Rizado</option>
 				</datalist>
 				<div class="flex gap-5" transition:slide>
 					<input
