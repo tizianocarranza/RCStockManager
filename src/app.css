@@ -158,7 +158,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* Input */
 .input {
-	@apply px-4 h-10 max-w-32 w-full rounded-full text-sm border border-white shadow outline-none transition-all duration-300 box-border;
+	@apply px-4 h-10 max-w-32 w-full rounded-full text-sm border border-white shadow outline-none transition-all duration-300 box-border text-ellipsis;
 }
 
 .input--large {
@@ -176,7 +176,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .input-with-icon__input {
-	@apply h-full w-full outline-none font-normal appearance-none px-2;
+	@apply h-full w-full outline-none font-normal appearance-none px-2 text-ellipsis;
 }
 
 .input-with-icon__input::placeholder {

@@ -11,8 +11,8 @@
 	]);
 </script>
 
-<div class="h-full w-full flex flex-wrap gap-5 p-5 items-start" in:slide>
-	<div class="w-full max-h-full flex flex-wrap gap-7 p-5 items-center overflow-y-auto">
+<div class="h-full w-full flex flex-wrap gap-5 lg:p-5 items-start" in:slide>
+	<div class="w-full max-h-full flex flex-wrap gap-3 lg:gap-7 p-2 items-center overflow-y-auto">
 		{#each searchResults as product (product)}
         <div animate:flip={{ duration: 300 }}>
             <ProductSearchResultCard {...product} />

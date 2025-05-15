@@ -42,6 +42,7 @@
 			<datalist id="materials">
 				<option value="Aluminio y plastico">Aluminio y plastico</option>
 				<option value="Cobre y bronce">Cobre y bronce</option>
+				<option value="Brazado">Brazado</option>
 			</datalist>
 			{#if selectedType === 'Radiador' || selectedType === 'Panel'}
 			<div class="flex flex-col gap-10">

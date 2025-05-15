@@ -36,6 +36,7 @@
 						class="text-sm font-semibold"
 						class:text-yellow-800={product.material === 'Cobre y bronce'}
 						class:text-gray-400={product.material === 'Aluminio y plastico'}
+						class:text-blue-200={product.material === 'Brazado'}
 					>
 						{product.material}
 					</p>
