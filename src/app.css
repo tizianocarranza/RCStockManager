@@ -63,7 +63,7 @@ button {
 		"display display display display"
 		"display display display display"
 		"display display display display"
-		"editar editar ingreso  egreso";
+		"editar ingreso  egreso eliminar";
 }
 
 /* Responsive Grid */
@@ -84,14 +84,14 @@ button {
 	.sections-container--product-display {
 		grid-template-columns: repeat(2, 1fr);
 		grid-template-areas:
-		'buscar buscar'
+		'buscar nuevo'
 		'display display'
 		'display display'
 		'display display'
 		'display display'
 		'display display'
 		'ingreso egreso'
-		'editar nuevo';
+		'editar eliminar';
 	}
 	
 }
@@ -106,6 +106,9 @@ button {
 
 .editar {
 	grid-area: editar;
+}
+.eliminar {
+	grid-area: eliminar;
 }
 
 .ingreso {

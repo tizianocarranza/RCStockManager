@@ -175,3 +175,26 @@ export async function decreaseProductQuantity(id: string, tipo: string, amount: 
     }
 }
 
+export const deleteProduct = async (id: string, tipo: string) => {
+    await connectToDB();
+
+    try {
+        const { model } = getModelByTipo<Radiador | Panel | Electroventilador>(tipo);
+        const deleted = await model.findByIdAndDelete(id).lean<Radiador | Panel | Electroventilador>();
+
+        if (!deleted) {
+            throw new Error("Producto no encontrado");
+        }
+
+        return {
+            success: true,
+            message: `Producto eliminado correctamente`,
+            producto: toSerializableObject(deleted)
+        };
+    } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+        throw new Error("No se pudo eliminar el producto");
+    }
+};
+
+

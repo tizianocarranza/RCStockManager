@@ -1,6 +1,6 @@
 import type { Products } from "$lib/types/types";
 import { capitalize } from "$lib/logic/utils";
-import { getAllProducts, updateProduct, increaseProductQuantity, decreaseProductQuantity } from "$lib/server/data";
+import { getAllProducts, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { connectToDB } from '$lib/server/db/db';
 import { Panel } from '$lib/server/models/Panel';
@@ -169,6 +169,25 @@ export const actions: Actions = {
 		} catch (error) {
 			console.error(error);
 			return fail(500, { error: 'No se pudo reducir la cantidad' });
+		}
+	},
+	deleteProduct: async ({ request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id')?.toString();
+		const tipo = capitalize(formData.get('tipo')?.toString() || '');
+
+		if (!id || !tipo)  return fail(400, { error: 'ID, tipo y cantidad son requeridos' });
+
+		try {
+			const result = await deleteProduct(id, tipo);
+			return {
+				success: true,
+				message: result.message,
+				producto: result.producto
+			};
+		} catch (error) {
+			console.error(error);
+			return fail(500, { error: 'No se pudo eliminar el producto.' });
 		}
 	}
 };

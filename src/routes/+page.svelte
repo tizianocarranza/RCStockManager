@@ -1,7 +1,7 @@
 <script>
 	import { slide } from 'svelte/transition';
 
-	import { CloseButton, Buscar, Nuevo, Editar, Ingreso, Egreso, Display } from '$lib/components';
+	import { CloseButton, Buscar, Nuevo, Editar, Eliminar, Ingreso, Egreso, Display } from '$lib/components';
 	import { search, add, packageExport, packageImport, fileSearch, dollar } from '$lib/icons';
 	import { products } from '$lib/shared/products.svelte';
 	import { currentDisplayed } from '$lib/shared/displayed.svelte.js';
@@ -31,6 +31,8 @@
 		<Display />
 
 		{#if currentDisplayed.product}
+			<Eliminar />
+
 			<Editar />
 
 			<Ingreso />
