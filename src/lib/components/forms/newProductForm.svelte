@@ -13,7 +13,7 @@
 			: 'Producto'}
 	</h1>
 	<form
-		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-full justify-between rounded"
+		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-full justify-between rounde overflow-y-auto"
 		method="post"
 		action="?/createProduct"
 	>
@@ -44,18 +44,21 @@
 				<option value="Cobre y bronce">Cobre y bronce</option>
 			</datalist>
 			{#if selectedType === 'Radiador' || selectedType === 'Panel'}
+			<div class="flex flex-col gap-10">
+
 				<input
-					class="input input--large"
-					placeholder="Material"
-					list="materials"
-					name="material"
-					transition:slide
+				class="input input--large"
+				placeholder="Material"
+				list="materials"
+				name="material"
+				transition:slide
 				/>
 				<div class="flex gap-5">
 					<input class="input" placeholder="Alto" name="alto" type="number" />
 					<input class="input" placeholder="Ancho" name="ancho" type="number" />
 					<input class="input" placeholder="Espesor" name="espesor" type="number" />
 				</div>
+			</div>
 			{/if}
 			{#if selectedType === 'Panel'}
 				<datalist id="filas">

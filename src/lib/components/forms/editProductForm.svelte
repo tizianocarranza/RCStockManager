@@ -42,7 +42,7 @@
 	</h1>
 
 	<form
-		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-3/4 justify-between rounded"
+		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-full justify-between rounded overflow-y-auto"
 		method="post"
 		action="?/editProduct"
 		onsubmit={handleSubmit}
