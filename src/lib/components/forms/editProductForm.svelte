@@ -2,6 +2,10 @@
 	import { changeDisplay } from '$lib/logic/displayed';
 	import { selectedProduct } from '$lib/shared/products.svelte';
 	import { slide } from 'svelte/transition';
+	import { popup } from '$lib/stores/popup';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { products } from '$lib/shared/products.svelte';
 
 	let product = selectedProduct.product;
 	let selectedType = $state(
@@ -14,26 +18,20 @@
 					: 'Otro'
 	);
 
-	let formSuccess = false;
-
-	const handleSubmit = async (event) => {
-		const form = event.target;
-
-		// Aquí puedes hacer validaciones o manipulaciones antes de enviar
-		const formData = new FormData(form);
-		const res = await fetch(form.action, {
-			method: 'POST',
-			body: formData
-		});
-
-		if (res.ok) {
-			formSuccess = true;
-			changeDisplay("product")
-		} else {
-			formSuccess = false;
-			console.error('Error al actualizar el producto');
-		}
-	};
+	function handleSubmit() {
+		return async ({ result }) => {
+			if (result.type === 'failure') {
+				popup.showError(result.data?.message || 'Error al actualizar el producto');
+			} else if (result.type === 'success') {
+				popup.showSuccess(result.data?.message || 'Producto actualizado exitosamente');
+				if (result.data?.producto) {
+					selectedProduct.product = result.data.producto;
+				}
+				await invalidateAll();
+				changeDisplay("product");
+			}
+		};
+	}
 </script>
 
 <div class="h-full w-full flex flex-col p-5 gap-10" in:slide>
@@ -45,7 +43,7 @@
 		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-full justify-between rounded overflow-y-auto"
 		method="post"
 		action="?/editProduct"
-		onsubmit={handleSubmit}
+		use:enhance={handleSubmit}
 	>
 		<input type="hidden" name="id" value={product._id} />
 
@@ -56,6 +54,7 @@
 					placeholder="Codigo"
 					name="codigo"
 					value={product.codigo}
+					required
 				/>
 				<input
 					class="input input--large"
@@ -63,6 +62,7 @@
 					list="types"
 					name="tipo"
 					bind:value={selectedType}
+					required
 				/>
 				<datalist id="types">
 					<option value="Radiador">Radiador</option>
@@ -77,6 +77,7 @@
 				placeholder="Detalle"
 				name="detalle"
 				value={product.detalle}
+				required
 			/>
 
 			<div class="flex gap-5">
@@ -86,6 +87,7 @@
 					type="number"
 					name="cantidad"
 					value={product.cantidad}
+					required
 				/>
 				<input class="input input--large" placeholder="Notas" name="notas" value={product.notas} />
 			</div>
@@ -104,6 +106,7 @@
 					name="material"
 					transition:slide
 					value={product.material}
+					required
 				/>
 				<div class="flex gap-5">
 					<input
@@ -112,6 +115,7 @@
 						name="alto"
 						type="number"
 						value={product.dimensiones?.alto}
+						required
 					/>
 					<input
 						class="input"
@@ -119,6 +123,7 @@
 						name="ancho"
 						type="number"
 						value={product.dimensiones?.ancho}
+						required
 					/>
 					<input
 						class="input"
@@ -126,6 +131,7 @@
 						name="espesor"
 						type="number"
 						value={product.dimensiones?.espesor}
+						required
 					/>
 				</div>
 			{/if}
@@ -143,6 +149,7 @@
 						name="numero-filas"
 						type="number"
 						value={product.filas?.numero}
+						required
 					/>
 					<input
 						class="input input--large"
@@ -150,6 +157,7 @@
 						name="tipo-filas"
 						list="filas"
 						value={product.filas?.tipo}
+						required
 					/>
 				</div>
 			{:else if selectedType === 'Electroventilador'}
@@ -160,6 +168,7 @@
 						name="diametro"
 						type="number"
 						value={product.diametro}
+						required
 					/>
 					<input
 						class="input input--large"
@@ -167,6 +176,7 @@
 						name="aspas"
 						type="number"
 						value={product.aspas}
+						required
 					/>
 				</div>
 			{/if}

@@ -3,6 +3,7 @@
 	import { ProductSearchResultCard } from '$lib/components';
 	import { products } from '$lib/shared/products.svelte';
 	import { slide } from 'svelte/transition';
+	import { popup } from '$lib/stores/popup';
 
 	let searchResults = $derived([
 		...(products.filteredProducts.radiadores || []),

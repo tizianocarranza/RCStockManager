@@ -8,7 +8,12 @@
 
 	let { data } = $props();
 
-	products.allProducts = data.allProducts;
+	$effect(() => {
+		if (data.allProducts) {
+			products.allProducts = data.allProducts;
+			products.filteredProducts = data.allProducts;
+		}
+	});
 </script>
 
 <main class="relative h-screen w-screen overflow-hidden p-5 text-white">

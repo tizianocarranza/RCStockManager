@@ -3,7 +3,7 @@
 	import { slide } from 'svelte/transition';
 	import { selectedProduct } from '$lib/shared/products.svelte';
 
-	let product = selectedProduct.product;
+	let product = $derived(selectedProduct.product);
 </script>
 
 <div class="flex h-full w-full gap-20">

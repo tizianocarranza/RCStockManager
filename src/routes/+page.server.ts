@@ -25,8 +25,11 @@ export const actions: Actions = {
 		await connectToDB();
 		const data = await request.formData();
 
-		const tipo = data.get('tipo')?.toString().toLowerCase(); // Asegurar que coincida con el esquema
-		if (!tipo) return fail(400, { error: 'Tipo de producto es requerido.' });
+		const tipo = data.get('tipo')?.toString().toLowerCase();
+		if (!tipo) return fail(400, { 
+			success: false,
+			message: 'El tipo de producto es requerido.'
+		});
 
 		const base = {
 			codigo: data.get('codigo')?.toString().toUpperCase(),
@@ -41,19 +44,26 @@ export const actions: Actions = {
 		};
 
 		try {
+			let newProduct;
 			if (tipo === 'radiador') {
 				const material = data.get('material')?.toString();
-				if (!material) return fail(400, { error: 'Material requerido para Radiador.' });
-				await Radiador.create({ ...base, tipo: 'radiador', material });
+				if (!material) return fail(400, { 
+					success: false,
+					message: 'El material es requerido para Radiador.'
+				});
+				newProduct = await Radiador.create({ ...base, tipo: 'radiador', material });
 			} else if (tipo === 'panel') {
 				const material = data.get('material')?.toString();
 				const numero = parseInt(data.get('numero-filas')?.toString() || '0');
 				const tipoFila = data.get('tipo-filas')?.toString();
 
 				if (!material || !tipoFila)
-					return fail(400, { error: 'Campos de filas y material requeridos para Panel.' });
+					return fail(400, { 
+						success: false,
+						message: 'Los campos de filas y material son requeridos para Panel.'
+					});
 
-				await Panel.create({
+				newProduct = await Panel.create({
 					...base,
 					tipo: 'panel',
 					material,
@@ -66,68 +76,72 @@ export const actions: Actions = {
 				const diametro = parseFloat(data.get('diametro')?.toString() || '0');
 				const aspas = parseInt(data.get('aspas')?.toString() || '0');
 
-				await Electroventilador.create({
+				newProduct = await Electroventilador.create({
 					...base,
 					tipo: 'electroventilador',
 					diametro,
 					aspas,
 				});
 			} else {
-				return fail(400, { error: 'Tipo de producto no válido.' });
+				return fail(400, { 
+					success: false,
+					message: 'Tipo de producto no válido.'
+				});
 			}
+
+			return {
+				success: true,
+				message: 'Producto creado exitosamente.',
+				producto: JSON.parse(JSON.stringify(newProduct))
+			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { error: 'Error guardando el producto.' });
+			return fail(500, { 
+				success: false,
+				message: 'Error al guardar el producto.'
+			});
 		}
 	},
 	editProduct: async ({ request }) => {
 		const formData = await request.formData();
-
-		// Extraer los campos del formulario
 		const id = formData.get('id');
-		const codigo = formData.get('codigo');
 		const tipo = formData.get('tipo');
-		const detalle = formData.get('detalle');
-		const cantidad = Number(formData.get('cantidad'));  // Convertir a número
-		const notas = formData.get('notas');
-		const material = formData.get('material');
-		const alto = Number(formData.get('alto'));  // Convertir a número
-		const ancho = Number(formData.get('ancho'));  // Convertir a número
-		const espesor = Number(formData.get('espesor'));  // Convertir a número
-		const numeroFilas = formData.get('numero-filas') ? Number(formData.get('numero-filas')) : undefined;  // Convertir a número
-		const tipoFilas = formData.get('tipo-filas');
-		const diametro = Number(formData.get('diametro'));  // Convertir a número
-		const aspas = Number(formData.get('aspas'));
 
-		// Llamar a la función que actualiza el producto
 		try {
-			await updateProduct({
-				id,
-				codigo,
-				tipo,
-				detalle,
-				cantidad,
-				notas,
-				material,
-				dimensiones: { alto, ancho, espesor },
-				filas: { numero: numeroFilas, tipo: tipoFilas },
-				electroventilador: { diametro, aspas }
+			const result = await updateProduct({
+				id: formData.get('id'),
+				codigo: formData.get('codigo'),
+				tipo: formData.get('tipo'),
+				detalle: formData.get('detalle'),
+				cantidad: Number(formData.get('cantidad')),
+				notas: formData.get('notas'),
+				material: formData.get('material'),
+				dimensiones: {
+					alto: Number(formData.get('alto')),
+					ancho: Number(formData.get('ancho')),
+					espesor: Number(formData.get('espesor'))
+				},
+				filas: {
+					numero: formData.get('numero-filas') ? Number(formData.get('numero-filas')) : undefined,
+					tipo: formData.get('tipo-filas')
+				},
+				electroventilador: {
+					diametro: Number(formData.get('diametro')),
+					aspas: Number(formData.get('aspas'))
+				}
 			});
-			selectedProduct.product = {
-				id,
-				codigo,
-				tipo,
-				detalle,
-				cantidad,
-				notas,
-				material,
-				dimensiones: { alto, ancho, espesor },
-				filas: { numero: numeroFilas, tipo: tipoFilas },
-				electroventilador: { diametro, aspas }
+
+			return {
+				success: true,
+				message: 'Producto actualizado exitosamente.',
+				producto: JSON.parse(JSON.stringify(result))
 			};
 		} catch (error) {
 			console.error('Error al actualizar el producto:', error);
-			return { status: 500, error: new Error('Error al actualizar el producto') };
+			return fail(500, { 
+				success: false,
+				message: 'Error al actualizar el producto.'
+			});
 		}
 	},
 	increaseProductQuantity: async ({ request }) => {
@@ -136,18 +150,35 @@ export const actions: Actions = {
 		const tipo = capitalize(formData.get('tipo')?.toString() || '');
 		const amount = Number(formData.get('stock-in'));
 
-		if (!id || !tipo || !amount)  return fail(400, { error: 'ID, tipo y cantidad son requeridos' });
+		if (!id || !tipo || !amount) return fail(400, { 
+			success: false,
+			message: 'ID, tipo y cantidad son requeridos'
+		});
 
 		try {
 			const result = await increaseProductQuantity(id, tipo, amount);
+			
+			// Get the updated product data
+			let updatedProduct;
+			if (tipo.toLowerCase() === 'radiador') {
+				updatedProduct = await Radiador.findById(id);
+			} else if (tipo.toLowerCase() === 'panel') {
+				updatedProduct = await Panel.findById(id);
+			} else if (tipo.toLowerCase() === 'electroventilador') {
+				updatedProduct = await Electroventilador.findById(id);
+			}
+
 			return {
 				success: true,
-				message: result.message,
-				producto: result.producto
+				message: `Stock aumentado en ${amount} unidades.`,
+				producto: JSON.parse(JSON.stringify(updatedProduct))
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { error: 'No se pudo aumentar la cantidad' });
+			return fail(500, { 
+				success: false,
+				message: 'No se pudo aumentar la cantidad'
+			});
 		}
 	},
 
@@ -157,18 +188,35 @@ export const actions: Actions = {
 		const tipo = capitalize(formData.get('tipo')?.toString() || '');
 		const amount = Number(formData.get('stock-out'));
 
-		if (!id || !tipo || !amount)  return fail(400, { error: 'ID, tipo y cantidad son requeridos' });
+		if (!id || !tipo || !amount) return fail(400, { 
+			success: false,
+			message: 'ID, tipo y cantidad son requeridos'
+		});
 
 		try {
 			const result = await decreaseProductQuantity(id, tipo, amount);
+			
+			// Get the updated product data
+			let updatedProduct;
+			if (tipo.toLowerCase() === 'radiador') {
+				updatedProduct = await Radiador.findById(id);
+			} else if (tipo.toLowerCase() === 'panel') {
+				updatedProduct = await Panel.findById(id);
+			} else if (tipo.toLowerCase() === 'electroventilador') {
+				updatedProduct = await Electroventilador.findById(id);
+			}
+
 			return {
 				success: true,
-				message: result.message,
-				producto: result.producto
+				message: `Stock reducido en ${amount} unidades.`,
+				producto: JSON.parse(JSON.stringify(updatedProduct))
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { error: 'No se pudo reducir la cantidad' });
+			return fail(500, { 
+				success: false,
+				message: 'No se pudo reducir la cantidad'
+			});
 		}
 	},
 	deleteProduct: async ({ request }) => {
@@ -176,18 +224,24 @@ export const actions: Actions = {
 		const id = formData.get('id')?.toString();
 		const tipo = capitalize(formData.get('tipo')?.toString() || '');
 
-		if (!id || !tipo)  return fail(400, { error: 'ID, tipo y cantidad son requeridos' });
+		if (!id || !tipo) return fail(400, { 
+			success: false,
+			message: 'ID y tipo son requeridos'
+		});
 
 		try {
 			const result = await deleteProduct(id, tipo);
 			return {
 				success: true,
-				message: result.message,
-				producto: result.producto
+				message: 'Producto eliminado exitosamente.',
+				producto: JSON.parse(JSON.stringify(result.producto))
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { error: 'No se pudo eliminar el producto.' });
+			return fail(500, { 
+				success: false,
+				message: 'No se pudo eliminar el producto.'
+			});
 		}
 	}
 };

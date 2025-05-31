@@ -22,3 +22,5 @@ export { default as Egreso } from "./sections/egreso.svelte"
 export { default as Editar } from "./sections/editar.svelte"
 export { default as Eliminar } from "./sections/eliminar.svelte"
 export { default as Display } from "./sections/display.svelte"
+
+export { default as InformationPopup } from "./InformationPopup.svelte";

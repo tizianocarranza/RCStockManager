@@ -1,7 +1,22 @@
 <script>
 	import { slide } from 'svelte/transition';
+	import { popup } from '$lib/stores/popup';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 
 	let selectedType = $state('');
+
+	function handleSubmit() {
+		return async ({ result }) => {
+			if (result.type === 'failure') {
+				popup.showError(result.data?.message || 'Error al crear el producto');
+			} else if (result.type === 'success') {
+				popup.showSuccess(result.data?.message || 'Producto creado exitosamente');
+				selectedType = '';
+				await invalidateAll();
+			}
+		};
+	}
 </script>
 
 <div class="h-full w-full flex flex-col p-5 gap-10" in:slide>
@@ -16,16 +31,18 @@
 		class="flex flex-col lg:flex-row gap-5 lg:gap-10 w-full h-full justify-between rounde overflow-y-auto"
 		method="post"
 		action="?/createProduct"
+		use:enhance={handleSubmit}
 	>
 		<div class="flex flex-col gap-10 h-full flex-wrap">
 			<div class="flex gap-5">
-				<input class="input input--large" placeholder="Codigo" name="codigo" />
+				<input class="input input--large" placeholder="Codigo" name="codigo" required />
 				<input
 					class="input input--large"
 					placeholder="Tipo"
 					list="types"
 					name="tipo"
 					bind:value={selectedType}
+					required
 				/>
 				<datalist id="types">
 					<option value="Radiador">Radiador</option>
@@ -34,9 +51,9 @@
 					<option value="Otro">Otro</option>
 				</datalist>
 			</div>
-			<input class="input input--large" placeholder="Detalle" name="detalle" />
+			<input class="input input--large" placeholder="Detalle" name="detalle" required />
 			<div class="flex gap-5">
-				<input class="input" placeholder="Cantidad" type="number" name="cantidad" />
+				<input class="input" placeholder="Cantidad" type="number" name="cantidad" required />
 				<input class="input input--large" placeholder="Notas" name="notas" />
 			</div>
 			<datalist id="materials">
@@ -46,18 +63,18 @@
 			</datalist>
 			{#if selectedType === 'Radiador' || selectedType === 'Panel'}
 			<div class="flex flex-col gap-10">
-
 				<input
 				class="input input--large"
 				placeholder="Material"
 				list="materials"
 				name="material"
 				transition:slide
+				required
 				/>
 				<div class="flex gap-5">
-					<input class="input" placeholder="Alto" name="alto" type="number" />
-					<input class="input" placeholder="Ancho" name="ancho" type="number" />
-					<input class="input" placeholder="Espesor" name="espesor" type="number" />
+					<input class="input" placeholder="Alto" name="alto" type="number" required />
+					<input class="input" placeholder="Ancho" name="ancho" type="number" required />
+					<input class="input" placeholder="Espesor" name="espesor" type="number" required />
 				</div>
 			</div>
 			{/if}
@@ -73,22 +90,31 @@
 						placeholder="Numero de filas"
 						name="numero-filas"
 						type="number"
+						required
 					/>
 					<input
 						class="input input--large"
 						placeholder="Tipo de filas"
 						name="tipo-filas"
 						list="filas"
+						required
 					/>
 				</div>
 			{:else if selectedType === 'Electroventilador'}
 				<div class="flex gap-5" transition:slide>
-					<input class="input input--large" placeholder="Diametro" name="diametro" type="number" />
+					<input 
+						class="input input--large" 
+						placeholder="Diametro" 
+						name="diametro" 
+						type="number"
+						required 
+					/>
 					<input
 						class="input input--large"
 						placeholder="Numero de aspas"
 						name="aspas"
 						type="number"
+						required
 					/>
 				</div>
 			{/if}
