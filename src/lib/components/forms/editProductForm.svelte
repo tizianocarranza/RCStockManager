@@ -5,7 +5,7 @@
 	import { popup } from '$lib/stores/popup';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { products } from '$lib/shared/products.svelte';
+	import { selectProduct } from '$lib/logic/products';
 
 	let product = selectedProduct.product;
 	let selectedType = $state(
@@ -25,10 +25,10 @@
 			} else if (result.type === 'success') {
 				popup.showSuccess(result.data?.message || 'Producto actualizado exitosamente');
 				if (result.data?.producto) {
-					selectedProduct.product = result.data.producto;
+					selectProduct(result.data.producto);
+					changeDisplay('product');
 				}
 				await invalidateAll();
-				changeDisplay("product");
 			}
 		};
 	}
@@ -115,7 +115,6 @@
 						name="alto"
 						type="number"
 						value={product.dimensiones?.alto}
-						required
 					/>
 					<input
 						class="input"
@@ -123,7 +122,6 @@
 						name="ancho"
 						type="number"
 						value={product.dimensiones?.ancho}
-						required
 					/>
 					<input
 						class="input"
@@ -131,7 +129,6 @@
 						name="espesor"
 						type="number"
 						value={product.dimensiones?.espesor}
-						required
 					/>
 				</div>
 			{/if}

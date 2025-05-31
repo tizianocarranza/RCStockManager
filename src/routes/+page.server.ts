@@ -8,6 +8,17 @@ import { Radiador } from '$lib/server/models/Radiador';
 import { Electroventilador } from '$lib/server/models/Electroventilador';
 import { selectedProduct } from "$lib/shared/products.svelte";
 
+type BaseProduct = {
+	codigo?: string;
+	detalle?: string;
+	cantidad: number;
+	notas?: string;
+	dimensiones?: {
+		alto?: number;
+		ancho?: number;
+		espesor?: number;
+	};
+};
 
 export async function load() {
 	const allProducts: Products = await getAllProducts();
@@ -31,17 +42,25 @@ export const actions: Actions = {
 			message: 'El tipo de producto es requerido.'
 		});
 
-		const base = {
+		const base: BaseProduct = {
 			codigo: data.get('codigo')?.toString().toUpperCase(),
 			detalle: data.get('detalle')?.toString(),
 			cantidad: parseInt(data.get('cantidad')?.toString() || '0'),
 			notas: data.get('notas')?.toString(),
-			dimensiones: {
-				alto: parseFloat(data.get('alto')?.toString() || '0'),
-				ancho: parseFloat(data.get('ancho')?.toString() || '0'),
-				espesor: parseFloat(data.get('espesor')?.toString() || '0'),
-			},
 		};
+
+		// Only add dimensions if at least one value is provided
+		const alto = data.get('alto')?.toString();
+		const ancho = data.get('ancho')?.toString();
+		const espesor = data.get('espesor')?.toString();
+		
+		if (alto || ancho || espesor) {
+			base.dimensiones = {
+				...(alto && { alto: parseFloat(alto) }),
+				...(ancho && { ancho: parseFloat(ancho) }),
+				...(espesor && { espesor: parseFloat(espesor) })
+			};
+		}
 
 		try {
 			let newProduct;
@@ -107,6 +126,16 @@ export const actions: Actions = {
 		const id = formData.get('id');
 		const tipo = formData.get('tipo');
 
+		// Build dimensions object only if values are provided
+		const alto = formData.get('alto')?.toString();
+		const ancho = formData.get('ancho')?.toString();
+		const espesor = formData.get('espesor')?.toString();
+		
+		const dimensiones: { alto?: number; ancho?: number; espesor?: number } = {};
+		if (alto) dimensiones.alto = Number(alto);
+		if (ancho) dimensiones.ancho = Number(ancho);
+		if (espesor) dimensiones.espesor = Number(espesor);
+
 		try {
 			const result = await updateProduct({
 				id: formData.get('id'),
@@ -116,11 +145,7 @@ export const actions: Actions = {
 				cantidad: Number(formData.get('cantidad')),
 				notas: formData.get('notas'),
 				material: formData.get('material'),
-				dimensiones: {
-					alto: Number(formData.get('alto')),
-					ancho: Number(formData.get('ancho')),
-					espesor: Number(formData.get('espesor'))
-				},
+				dimensiones: Object.keys(dimensiones).length > 0 ? dimensiones : undefined,
 				filas: {
 					numero: formData.get('numero-filas') ? Number(formData.get('numero-filas')) : undefined,
 					tipo: formData.get('tipo-filas')

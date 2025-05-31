@@ -3,7 +3,8 @@
 	import { popup } from '$lib/stores/popup';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-
+	import { selectProduct } from '$lib/logic/products';
+	import { changeDisplay } from '$lib/logic/displayed';
 	let selectedType = $state('');
 
 	function handleSubmit() {
@@ -13,6 +14,10 @@
 			} else if (result.type === 'success') {
 				popup.showSuccess(result.data?.message || 'Producto creado exitosamente');
 				selectedType = '';
+				if (result.data?.producto) {
+					selectProduct(result.data.producto);
+					changeDisplay('product');
+				}
 				await invalidateAll();
 			}
 		};
@@ -72,9 +77,9 @@
 				required
 				/>
 				<div class="flex gap-5">
-					<input class="input" placeholder="Alto" name="alto" type="number" required />
-					<input class="input" placeholder="Ancho" name="ancho" type="number" required />
-					<input class="input" placeholder="Espesor" name="espesor" type="number" required />
+					<input class="input" placeholder="Alto" name="alto" type="number" />
+					<input class="input" placeholder="Ancho" name="ancho" type="number" />
+					<input class="input" placeholder="Espesor" name="espesor" type="number" />
 				</div>
 			</div>
 			{/if}
