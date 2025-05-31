@@ -146,7 +146,6 @@
 						name="numero-filas"
 						type="number"
 						value={product.filas?.numero}
-						required
 					/>
 					<input
 						class="input input--large"
@@ -154,7 +153,6 @@
 						name="tipo-filas"
 						list="filas"
 						value={product.filas?.tipo}
-						required
 					/>
 				</div>
 			{:else if selectedType === 'Electroventilador'}
@@ -164,16 +162,14 @@
 						placeholder="Diametro"
 						name="diametro"
 						type="number"
-						value={product.diametro}
-						required
+						value={product?.diametro}
 					/>
 					<input
 						class="input input--large"
 						placeholder="Numero de aspas"
 						name="aspas"
 						type="number"
-						value={product.aspas}
-						required
+						value={product?.aspas}
 					/>
 				</div>
 			{/if}

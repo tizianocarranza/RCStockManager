@@ -65,9 +65,90 @@ export const getProductById = async (
 export const updateProduct = async (productData: any) => {
     await connectToDB();
 
-    const { id, tipo, codigo, detalle, cantidad, notas, material, dimensiones, filas, electroventilador } =
-        productData;
+    const { id, tipo, codigo, detalle, cantidad, notas, material, dimensiones, filas, electroventilador } = productData;
 
+    // First, find the current product to get its original type
+    let originalProduct: any = null;
+    try {
+        // Try to find the product in each collection until we find it
+        const models = [RadiadorModel, PanelModel, ElectroventiladorModel];
+        for (const model of models) {
+            const doc = await model.findById(id).lean();
+            if (doc) {
+                originalProduct = toSerializableObject(doc);
+                break;
+            }
+        }
+
+        if (!originalProduct) {
+            throw new Error("Producto no encontrado");
+        }
+    } catch (error) {
+        console.error("Error finding original product:", error);
+        throw new Error("No se pudo encontrar el producto original");
+    }
+
+    // If the type has changed, we need to create a new document and delete the old one
+    if (originalProduct.tipo.toLowerCase() !== tipo.toLowerCase()) {
+        let newProduct;
+        const baseFields = { codigo, detalle, cantidad, notas };
+
+        try {
+            // Create the new product with the correct type
+            switch (tipo) {
+                case "Radiador":
+                    newProduct = await RadiadorModel.create({
+                        ...baseFields,
+                        tipo: "radiador",
+                        material,
+                        ...(dimensiones && { dimensiones })
+                    });
+                    break;
+                case "Panel":
+                    newProduct = await PanelModel.create({
+                        ...baseFields,
+                        tipo: "panel",
+                        material,
+                        ...(dimensiones && { dimensiones }),
+                        ...(filas && { filas })
+                    });
+                    break;
+                case "Electroventilador":
+                    newProduct = await ElectroventiladorModel.create({
+                        ...baseFields,
+                        tipo: "electroventilador",
+                        ...(dimensiones && { dimensiones }),
+                        ...(electroventilador && {
+                            diametro: electroventilador.diametro,
+                            aspas: electroventilador.aspas
+                        })
+                    });
+                    break;
+                default:
+                    throw new Error("Tipo de producto no reconocido");
+            }
+
+            // Delete the old product
+            switch (originalProduct.tipo.toLowerCase()) {
+                case "radiador":
+                    await RadiadorModel.findByIdAndDelete(id);
+                    break;
+                case "panel":
+                    await PanelModel.findByIdAndDelete(id);
+                    break;
+                case "electroventilador":
+                    await ElectroventiladorModel.findByIdAndDelete(id);
+                    break;
+            }
+
+            return toSerializableObject(newProduct);
+        } catch (error) {
+            console.error("Error during type change:", error);
+            throw new Error("No se pudo cambiar el tipo del producto");
+        }
+    }
+
+    // If the type hasn't changed, just update the existing document
     let model;
     let updateFields = {};
 
@@ -87,8 +168,9 @@ export const updateProduct = async (productData: any) => {
                 detalle,
                 cantidad,
                 notas,
-                diametro: electroventilador.diametro,
-                aspas: electroventilador.aspas
+                diametro: electroventilador?.diametro,
+                aspas: electroventilador?.aspas,
+                ...(dimensiones && { dimensiones })
             };
             break;
         default:

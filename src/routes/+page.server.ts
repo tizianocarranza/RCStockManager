@@ -73,33 +73,33 @@ export const actions: Actions = {
 				newProduct = await Radiador.create({ ...base, tipo: 'radiador', material });
 			} else if (tipo === 'panel') {
 				const material = data.get('material')?.toString();
-				const numero = parseInt(data.get('numero-filas')?.toString() || '0');
+				if (!material) return fail(400, { 
+					success: false,
+					message: 'El material es requerido para Panel.'
+				});
+
+				const numero = data.get('numero-filas')?.toString();
 				const tipoFila = data.get('tipo-filas')?.toString();
 
-				if (!material || !tipoFila)
-					return fail(400, { 
-						success: false,
-						message: 'Los campos de filas y material son requeridos para Panel.'
-					});
+				const filas: { numero?: number; tipo?: string } = {};
+				if (numero) filas.numero = parseInt(numero);
+				if (tipoFila) filas.tipo = tipoFila;
 
 				newProduct = await Panel.create({
 					...base,
 					tipo: 'panel',
 					material,
-					filas: {
-						numero,
-						tipo: tipoFila as 'Supertubular' | 'Convencional',
-					},
+					...(Object.keys(filas).length > 0 && { filas })
 				});
 			} else if (tipo === 'electroventilador') {
-				const diametro = parseFloat(data.get('diametro')?.toString() || '0');
-				const aspas = parseInt(data.get('aspas')?.toString() || '0');
+				const diametro = data.get('diametro')?.toString();
+				const aspas = data.get('aspas')?.toString();
 
 				newProduct = await Electroventilador.create({
 					...base,
 					tipo: 'electroventilador',
-					diametro,
-					aspas,
+					...(diametro && { diametro: parseFloat(diametro) }),
+					...(aspas && { aspas: parseInt(aspas) })
 				});
 			} else {
 				return fail(400, { 
@@ -136,6 +136,20 @@ export const actions: Actions = {
 		if (ancho) dimensiones.ancho = Number(ancho);
 		if (espesor) dimensiones.espesor = Number(espesor);
 
+		// Build electroventilador object only if values are provided
+		const diametro = formData.get('diametro')?.toString();
+		const aspas = formData.get('aspas')?.toString();
+		const electroventilador: { diametro?: number; aspas?: number } = {};
+		if (diametro) electroventilador.diametro = Number(diametro);
+		if (aspas) electroventilador.aspas = Number(aspas);
+
+		// Build filas object only if values are provided
+		const numeroFilas = formData.get('numero-filas')?.toString();
+		const tipoFilas = formData.get('tipo-filas')?.toString();
+		const filas: { numero?: number; tipo?: string } = {};
+		if (numeroFilas) filas.numero = Number(numeroFilas);
+		if (tipoFilas) filas.tipo = tipoFilas;
+
 		try {
 			const result = await updateProduct({
 				id: formData.get('id'),
@@ -146,14 +160,8 @@ export const actions: Actions = {
 				notas: formData.get('notas'),
 				material: formData.get('material'),
 				dimensiones: Object.keys(dimensiones).length > 0 ? dimensiones : undefined,
-				filas: {
-					numero: formData.get('numero-filas') ? Number(formData.get('numero-filas')) : undefined,
-					tipo: formData.get('tipo-filas')
-				},
-				electroventilador: {
-					diametro: Number(formData.get('diametro')),
-					aspas: Number(formData.get('aspas'))
-				}
+				filas: Object.keys(filas).length > 0 ? filas : undefined,
+				electroventilador: Object.keys(electroventilador).length > 0 ? electroventilador : undefined
 			});
 
 			return {

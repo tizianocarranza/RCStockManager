@@ -95,14 +95,12 @@
 						placeholder="Numero de filas"
 						name="numero-filas"
 						type="number"
-						required
 					/>
 					<input
 						class="input input--large"
 						placeholder="Tipo de filas"
 						name="tipo-filas"
 						list="filas"
-						required
 					/>
 				</div>
 			{:else if selectedType === 'Electroventilador'}
@@ -112,14 +110,12 @@
 						placeholder="Diametro" 
 						name="diametro" 
 						type="number"
-						required 
 					/>
 					<input
 						class="input input--large"
 						placeholder="Numero de aspas"
 						name="aspas"
 						type="number"
-						required
 					/>
 				</div>
 			{/if}

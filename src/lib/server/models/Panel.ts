@@ -8,8 +8,8 @@ const PanelSchema = new Schema({
   tipo: { type: String, enum: ['panel'], default: 'panel' },
   material: { type: String, enum: ['Aluminio y plastico', 'Cobre y bronce', 'Brazado'], required: true },
   filas: {
-    numero: { type: Number, required: true },
-    tipo: { type: String, enum: ['Supertubular', 'Aletado', 'Rizado'], required: true },
+    numero: { type: Number, required: false },
+    tipo: { type: String, enum: ['Supertubular', 'Aletado', 'Rizado'], required: false },
   }
 });
 
