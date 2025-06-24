@@ -10,7 +10,7 @@
 
 	$effect(() => {
 		if (data.allProducts) {
-			products.allProducts = data.allProducts;
+	products.allProducts = data.allProducts;
 			products.filteredProducts = data.allProducts;
 		}
 	});

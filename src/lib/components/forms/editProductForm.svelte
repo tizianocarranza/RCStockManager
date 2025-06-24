@@ -9,13 +9,19 @@
 
 	let product = selectedProduct.product;
 	let selectedType = $state(
-		product.tipo === 'radiador'
-			? 'Radiador'
-			: product.tipo === 'panel'
-				? 'Panel'
-				: product.tipo === 'electroventilador'
-					? 'Electroventilador'
-					: 'Otro'
+		product.tipo === 'radiador' ? 'Radiador'
+		: product.tipo === 'panel' ? 'Panel'
+		: product.tipo === 'electroventilador' ? 'Electroventilador'
+		: product.tipo === 'calefactor' ? 'Calefactor'
+		: product.tipo === 'evaporador' ? 'Evaporador'
+		: product.tipo === 'condensador' ? 'Condensador'
+		: product.tipo === 'intercooler' ? 'Intercooler'
+		: product.tipo === 'encauzador' ? 'Encauzador'
+		: product.tipo === 'tanque-combustible' ? 'Tanque de combustible'
+		: product.tipo === 'compresor' ? 'Compresor'
+		: product.tipo === 'vaso-recuperador' ? 'Vaso recuperador'
+		: product.tipo === 'enfriador-aceite' ? 'Enfriador de aceite'
+		: 'Otro'
 	);
 
 	function handleSubmit() {
@@ -68,6 +74,15 @@
 					<option value="Radiador">Radiador</option>
 					<option value="Panel">Panel</option>
 					<option value="Electroventilador">Electroventilador</option>
+					<option value="Calefactor">Calefactor</option>
+					<option value="Evaporador">Evaporador</option>
+					<option value="Condensador">Condensador</option>
+					<option value="Intercooler">Intercooler</option>
+					<option value="Encauzador">Encauzador</option>
+					<option value="Tanque de combustible">Tanque de combustible</option>
+					<option value="Compresor">Compresor</option>
+					<option value="Vaso recuperador">Vaso recuperador</option>
+					<option value="Enfriador de aceite">Enfriador de aceite</option>
 					<option value="Otro">Otro</option>
 				</datalist>
 			</div>

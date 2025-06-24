@@ -8,7 +8,16 @@
 	let searchResults = $derived([
 		...(products.filteredProducts.radiadores || []),
 		...(products.filteredProducts.paneles || []),
-		...(products.filteredProducts.electroventiladores || [])
+		...(products.filteredProducts.electroventiladores || []),
+		...(products.filteredProducts.calefactores || []),
+		...(products.filteredProducts.evaporadores || []),
+		...(products.filteredProducts.condensadores || []),
+		...(products.filteredProducts.intercoolers || []),
+		...(products.filteredProducts.encauzadores || []),
+		...(products.filteredProducts.tanquesCombustible || []),
+		...(products.filteredProducts.compresores || []),
+		...(products.filteredProducts.vasosRecuperadores || []),
+		...(products.filteredProducts.enfriadoresAceite || [])
 	]);
 </script>
 

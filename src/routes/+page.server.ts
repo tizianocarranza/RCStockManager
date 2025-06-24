@@ -3,10 +3,19 @@ import { capitalize } from "$lib/logic/utils";
 import { getAllProducts, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { connectToDB } from '$lib/server/db/db';
-import { Panel } from '$lib/server/models/Panel';
-import { Radiador } from '$lib/server/models/Radiador';
-import { Electroventilador } from '$lib/server/models/Electroventilador';
 import { selectedProduct } from "$lib/shared/products.svelte";
+import { Radiador as RadiadorModel } from "$lib/server/models/Radiador";
+import { Panel as PanelModel } from "$lib/server/models/Panel";
+import { Electroventilador as ElectroventiladorModel } from "$lib/server/models/Electroventilador";
+import { Calefactor as CalefactorModel } from "$lib/server/models/Calefactor";
+import { Evaporador as EvaporadorModel } from "$lib/server/models/Evaporador";
+import { Condensador as CondensadorModel } from "$lib/server/models/Condensador";
+import { Intercooler as IntercoolerModel } from "$lib/server/models/Intercooler";
+import { Encauzador as EncauzadorModel } from "$lib/server/models/Encauzador";
+import { TanqueCombustible as TanqueCombustibleModel } from "$lib/server/models/TanqueCombustible";
+import { Compresor as CompresorModel } from "$lib/server/models/Compresor";
+import { VasoRecuperador as VasoRecuperadorModel } from "$lib/server/models/VasoRecuperador";
+import { EnfriadorAceite as EnfriadorAceiteModel } from "$lib/server/models/EnfriadorAceite";
 
 type BaseProduct = {
 	codigo?: string;
@@ -36,8 +45,9 @@ export const actions: Actions = {
 		await connectToDB();
 		const data = await request.formData();
 
+		// Convertir a minúsculas para asegurar coincidencia
 		const tipo = data.get('tipo')?.toString().toLowerCase();
-		if (!tipo) return fail(400, { 
+		if (!tipo) return fail(400, {
 			success: false,
 			message: 'El tipo de producto es requerido.'
 		});
@@ -53,7 +63,6 @@ export const actions: Actions = {
 		const alto = data.get('alto')?.toString();
 		const ancho = data.get('ancho')?.toString();
 		const espesor = data.get('espesor')?.toString();
-		
 		if (alto || ancho || espesor) {
 			base.dimensiones = {
 				...(alto && { alto: parseFloat(alto) }),
@@ -62,50 +71,90 @@ export const actions: Actions = {
 			};
 		}
 
+		// Campos opcionales para tipos especiales
+		const material = data.get('material')?.toString();
+		const numero = data.get('numero-filas')?.toString();
+		const tipoFila = data.get('tipo-filas')?.toString();
+		const filas: { numero?: number; tipo?: string } = {};
+		if (numero) filas.numero = parseInt(numero);
+		if (tipoFila) filas.tipo = tipoFila;
+		const diametro = data.get('diametro')?.toString();
+		const aspas = data.get('aspas')?.toString();
+		const electroventilador: { diametro?: number; aspas?: number } = {};
+		if (diametro) electroventilador.diametro = parseFloat(diametro);
+		if (aspas) electroventilador.aspas = parseInt(aspas);
+
 		try {
 			let newProduct;
-			if (tipo === 'radiador') {
-				const material = data.get('material')?.toString();
-				if (!material) return fail(400, { 
-					success: false,
-					message: 'El material es requerido para Radiador.'
-				});
-				newProduct = await Radiador.create({ ...base, tipo: 'radiador', material });
-			} else if (tipo === 'panel') {
-				const material = data.get('material')?.toString();
-				if (!material) return fail(400, { 
-					success: false,
-					message: 'El material es requerido para Panel.'
-				});
-
-				const numero = data.get('numero-filas')?.toString();
-				const tipoFila = data.get('tipo-filas')?.toString();
-
-				const filas: { numero?: number; tipo?: string } = {};
-				if (numero) filas.numero = parseInt(numero);
-				if (tipoFila) filas.tipo = tipoFila;
-
-				newProduct = await Panel.create({
-					...base,
-					tipo: 'panel',
-					material,
-					...(Object.keys(filas).length > 0 && { filas })
-				});
-			} else if (tipo === 'electroventilador') {
-				const diametro = data.get('diametro')?.toString();
-				const aspas = data.get('aspas')?.toString();
-
-				newProduct = await Electroventilador.create({
-					...base,
-					tipo: 'electroventilador',
-					...(diametro && { diametro: parseFloat(diametro) }),
-					...(aspas && { aspas: parseInt(aspas) })
-				});
-			} else {
-				return fail(400, { 
-					success: false,
-					message: 'Tipo de producto no válido.'
-				});
+			switch (tipo) {
+				case 'radiador':
+					const materialRadiador = data.get('material')?.toString();
+					if (!materialRadiador) return fail(400, { 
+						success: false,
+						message: 'El material es requerido para Radiador.'
+					});
+					newProduct = await RadiadorModel.create({ ...base, tipo: 'radiador', material: materialRadiador });
+					break;
+				case 'panel':
+					const materialPanel = data.get('material')?.toString();
+					if (!materialPanel) return fail(400, { 
+						success: false,
+						message: 'El material es requerido para Panel.'
+					});
+					const numero = data.get('numero-filas')?.toString();
+					const tipoFila = data.get('tipo-filas')?.toString();
+					const filas: { numero?: number; tipo?: string } = {};
+					if (numero) filas.numero = parseInt(numero);
+					if (tipoFila) filas.tipo = tipoFila;
+					newProduct = await PanelModel.create({
+						...base,
+						tipo: 'panel',
+						material: materialPanel,
+						...(Object.keys(filas).length > 0 && { filas })
+					});
+					break;
+				case 'electroventilador':
+					const diametro = data.get('diametro')?.toString();
+					const aspas = data.get('aspas')?.toString();
+					newProduct = await ElectroventiladorModel.create({
+						...base,
+						tipo: 'electroventilador',
+						...(diametro && { diametro: parseFloat(diametro) }),
+						...(aspas && { aspas: parseInt(aspas) })
+					});
+					break;
+				case 'calefactor':
+					newProduct = await CalefactorModel.create({ ...base, tipo: 'calefactor' });
+					break;
+				case 'evaporador':
+					newProduct = await EvaporadorModel.create({ ...base, tipo: 'evaporador' });
+					break;
+				case 'condensador':
+					newProduct = await CondensadorModel.create({ ...base, tipo: 'condensador' });
+					break;
+				case 'intercooler':
+					newProduct = await IntercoolerModel.create({ ...base, tipo: 'intercooler' });
+					break;
+				case 'encauzador':
+					newProduct = await EncauzadorModel.create({ ...base, tipo: 'encauzador' });
+					break;
+				case 'tanque de combustible':
+					newProduct = await TanqueCombustibleModel.create({ ...base, tipo: 'tanque-combustible' });
+					break;
+				case 'compresor':
+					newProduct = await CompresorModel.create({ ...base, tipo: 'compresor' });
+					break;
+				case 'vaso recuperador':
+					newProduct = await VasoRecuperadorModel.create({ ...base, tipo: 'vaso-recuperador' });
+					break;
+				case 'enfriador de aceite':
+					newProduct = await EnfriadorAceiteModel.create({ ...base, tipo: 'enfriador-aceite' });
+					break;
+				default:
+					return fail(400, { 
+						success: false,
+						message: 'Tipo de producto no válido.'
+					});
 			}
 
 			return {
@@ -124,7 +173,20 @@ export const actions: Actions = {
 	editProduct: async ({ request }) => {
 		const formData = await request.formData();
 		const id = formData.get('id');
-		const tipo = formData.get('tipo');
+		// Normalizar y mapear el tipo
+		let tipo = formData.get('tipo')?.toString().toLowerCase();
+		switch (tipo) {
+			case 'tanque de combustible':
+				tipo = 'tanque-combustible';
+				break;
+			case 'enfriador de aceite':
+				tipo = 'enfriador-aceite';
+				break;
+			case 'vaso recuperador':
+				tipo = 'vaso-recuperador';
+				break;
+			// Puedes agregar más mapeos si es necesario
+		}
 
 		// Build dimensions object only if values are provided
 		const alto = formData.get('alto')?.toString();
@@ -154,7 +216,7 @@ export const actions: Actions = {
 			const result = await updateProduct({
 				id: formData.get('id'),
 				codigo: formData.get('codigo'),
-				tipo: formData.get('tipo'),
+				tipo,
 				detalle: formData.get('detalle'),
 				cantidad: Number(formData.get('cantidad')),
 				notas: formData.get('notas'),
@@ -190,21 +252,10 @@ export const actions: Actions = {
 
 		try {
 			const result = await increaseProductQuantity(id, tipo, amount);
-			
-			// Get the updated product data
-			let updatedProduct;
-			if (tipo.toLowerCase() === 'radiador') {
-				updatedProduct = await Radiador.findById(id);
-			} else if (tipo.toLowerCase() === 'panel') {
-				updatedProduct = await Panel.findById(id);
-			} else if (tipo.toLowerCase() === 'electroventilador') {
-				updatedProduct = await Electroventilador.findById(id);
-			}
-
 			return {
 				success: true,
 				message: `Stock aumentado en ${amount} unidades.`,
-				producto: JSON.parse(JSON.stringify(updatedProduct))
+				producto: JSON.parse(JSON.stringify(result.producto))
 			};
 		} catch (error) {
 			console.error(error);
@@ -228,21 +279,10 @@ export const actions: Actions = {
 
 		try {
 			const result = await decreaseProductQuantity(id, tipo, amount);
-			
-			// Get the updated product data
-			let updatedProduct;
-			if (tipo.toLowerCase() === 'radiador') {
-				updatedProduct = await Radiador.findById(id);
-			} else if (tipo.toLowerCase() === 'panel') {
-				updatedProduct = await Panel.findById(id);
-			} else if (tipo.toLowerCase() === 'electroventilador') {
-				updatedProduct = await Electroventilador.findById(id);
-			}
-
 			return {
 				success: true,
 				message: `Stock reducido en ${amount} unidades.`,
-				producto: JSON.parse(JSON.stringify(updatedProduct))
+				producto: JSON.parse(JSON.stringify(result.producto))
 			};
 		} catch (error) {
 			console.error(error);
@@ -255,7 +295,20 @@ export const actions: Actions = {
 	deleteProduct: async ({ request }) => {
 		const formData = await request.formData();
 		const id = formData.get('id')?.toString();
-		const tipo = capitalize(formData.get('tipo')?.toString() || '');
+		// Normalizar y mapear el tipo
+		let tipo = formData.get('tipo')?.toString().toLowerCase();
+		switch (tipo) {
+			case 'tanque de combustible':
+				tipo = 'tanque-combustible';
+				break;
+			case 'enfriador de aceite':
+				tipo = 'enfriador-aceite';
+				break;
+			case 'vaso recuperador':
+				tipo = 'vaso-recuperador';
+				break;
+			// Puedes agregar más mapeos si es necesario
+		}
 
 		if (!id || !tipo) return fail(400, { 
 			success: false,
