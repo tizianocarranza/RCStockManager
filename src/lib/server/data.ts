@@ -142,6 +142,9 @@ export const updateProduct = async (productData: any) => {
         throw new Error("No se pudo encontrar el producto original");
     }
 
+    console.log(tipo.toLowerCase());
+    console.log(originalProduct.tipo.toLowerCase());
+
     // If the type has changed, we need to create a new document and delete the old one
     if (originalProduct.tipo.toLowerCase() !== tipo.toLowerCase()) {
         let newProduct;
@@ -243,14 +246,17 @@ export const updateProduct = async (productData: any) => {
 
     switch (tipo) {
         case "Radiador":
+        case "radiador":
             model = RadiadorModel;
             updateFields = { codigo, detalle, cantidad, notas, material, dimensiones };
             break;
         case "Panel":
+        case "panel":
             model = PanelModel;
             updateFields = { codigo, detalle, cantidad, notas, material, dimensiones, filas };
             break;
         case "Electroventilador":
+        case "electroventilador":
             model = ElectroventiladorModel;
             updateFields = {
                 codigo,
@@ -263,22 +269,27 @@ export const updateProduct = async (productData: any) => {
             };
             break;
         case "Calefactor":
+        case "calefactor":
             model = CalefactorModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
         case "Evaporador":
+        case "evaporador":
             model = EvaporadorModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
         case "Condensador":
+        case "condensador":
             model = CondensadorModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
         case "Intercooler":
+        case "intercooler":
             model = IntercoolerModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
         case "Encauzador":
+        case "encauzador":
             model = EncauzadorModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
@@ -289,6 +300,7 @@ export const updateProduct = async (productData: any) => {
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
         case "Compresor":
+        case "compresor":
             model = CompresorModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
