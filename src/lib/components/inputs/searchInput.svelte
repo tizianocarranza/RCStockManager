@@ -71,35 +71,3 @@
 		</div>
 	{/if}
 </form>
-
-<style>
-	.search-loading {
-		position: absolute;
-		right: 8px;
-		top: 50%;
-		transform: translateY(-50%);
-		pointer-events: none;
-		z-index: 10;
-	}
-
-	.search-loading__spinner {
-		width: 14px;
-		height: 14px;
-		border: 2px solid var(--input-border);
-		border-top: 2px solid var(--highlight);
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-		display: block;
-	}
-
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
-
-	/* Ensure the input container has relative positioning for the loading indicator */
-	.input-with-icon__container {
-		position: relative;
-		overflow: visible;
-	}
-</style>
