@@ -3,6 +3,7 @@
 	import { slide } from 'svelte/transition';
 	import { products } from '$lib/shared/products.svelte';
 	import { changeDisplay } from '$lib/logic/displayed';
+	import { debounce } from '$lib/logic/utils';
 
 	let {
 		placeholder = 'Ingrese el código o nombre del producto',
@@ -11,6 +12,7 @@
 	} = $props();
 
 	let userSearch = $state('');
+	let isSearching = $state(false);
 
 	const handleFocus = () => {
 		changeDisplay("search")
@@ -33,11 +35,26 @@
 		);
 	};
 
-	// Derived state for filtered products
-	let filteredProducts = $derived(filterProducts(products.allProducts));
+	// Debounced filter function to avoid unnecessary calls
+	const debouncedFilter = debounce((searchQuery) => {
+		isSearching = true;
+		
+		// Small delay to show loading state for better UX
+		setTimeout(() => {
+			if (searchQuery.trim() === '') {
+				// If search is empty, show all products
+				products.filteredProducts = products.allProducts;
+			} else {
+				// Apply filter with the search query
+				products.filteredProducts = filterProducts(products.allProducts);
+			}
+			isSearching = false;
+		}, 100);
+	}, 500); // 500ms delay
 
+	// Watch for changes in userSearch and apply debounced filtering
 	$effect(() => {
-		products.filteredProducts = filteredProducts;
+		debouncedFilter(userSearch);
 	});
 </script>
 
@@ -46,4 +63,43 @@
 		<img src={search} alt="Search icon" class="input-with-icon__icon" />
 	</button>
 	<input id="search-input" name="search" {placeholder} type="text" class="input-with-icon__input" onfocus={handleFocus} bind:value={userSearch} />
+	
+	<!-- Loading indicator -->
+	{#if isSearching}
+		<div class="search-loading" transition:slide={{duration: 100}}>
+			<div class="search-loading__spinner"></div>
+		</div>
+	{/if}
 </form>
+
+<style>
+	.search-loading {
+		position: absolute;
+		right: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+		pointer-events: none;
+		z-index: 10;
+	}
+
+	.search-loading__spinner {
+		width: 14px;
+		height: 14px;
+		border: 2px solid var(--input-border);
+		border-top: 2px solid var(--highlight);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+		display: block;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	/* Ensure the input container has relative positioning for the loading indicator */
+	.input-with-icon__container {
+		position: relative;
+		overflow: visible;
+	}
+</style>
