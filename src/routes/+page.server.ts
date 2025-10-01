@@ -16,6 +16,7 @@ import { TanqueCombustible as TanqueCombustibleModel } from "$lib/server/models/
 import { Compresor as CompresorModel } from "$lib/server/models/Compresor";
 import { VasoRecuperador as VasoRecuperadorModel } from "$lib/server/models/VasoRecuperador";
 import { EnfriadorAceite as EnfriadorAceiteModel } from "$lib/server/models/EnfriadorAceite";
+import { Otro as OtroModel } from "$lib/server/models/Otro";
 
 type BaseProduct = {
 	codigo?: string;
@@ -149,6 +150,9 @@ export const actions: Actions = {
 					break;
 				case 'enfriador de aceite':
 					newProduct = await EnfriadorAceiteModel.create({ ...base, tipo: 'enfriador-aceite' });
+					break;
+				case 'otro':
+					newProduct = await OtroModel.create({ ...base, tipo: 'otro' });
 					break;
 				default:
 					return fail(400, { 

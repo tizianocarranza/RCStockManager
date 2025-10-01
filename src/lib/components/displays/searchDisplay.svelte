@@ -17,7 +17,8 @@
 		...(products.filteredProducts.tanquesCombustible || []),
 		...(products.filteredProducts.compresores || []),
 		...(products.filteredProducts.vasosRecuperadores || []),
-		...(products.filteredProducts.enfriadoresAceite || [])
+		...(products.filteredProducts.enfriadoresAceite || []),
+		...(products.filteredProducts.otros || [])
 	]);
 </script>
 

@@ -12,14 +12,14 @@ import { TanqueCombustible as TanqueCombustibleModel } from "./models/TanqueComb
 import { Compresor as CompresorModel } from "./models/Compresor";
 import { VasoRecuperador as VasoRecuperadorModel } from "./models/VasoRecuperador";
 import { EnfriadorAceite as EnfriadorAceiteModel } from "./models/EnfriadorAceite";
-
-import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite } from "$lib/types/types";
+import { Otro as OtroModel } from "./models/Otro";
+import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite, Otro } from "$lib/types/types";
 
 export const getAllProducts = async (): Promise<Products> => {
     await connectToDB();
 
     try {
-        const [radiadoresRaw, panelesRaw, electroventiladoresRaw, calefactoresRaw, evaporadoresRaw, condensadoresRaw, intercoolersRaw, encauzadoresRaw, tanquesCombustibleRaw, compresoresRaw, vasosRecuperadoresRaw, enfriadoresAceiteRaw] = await Promise.all([
+        const [radiadoresRaw, panelesRaw, electroventiladoresRaw, calefactoresRaw, evaporadoresRaw, condensadoresRaw, intercoolersRaw, encauzadoresRaw, tanquesCombustibleRaw, compresoresRaw, vasosRecuperadoresRaw, enfriadoresAceiteRaw, otrosRaw] = await Promise.all([
             RadiadorModel.find().lean(),
             PanelModel.find().lean(),
             ElectroventiladorModel.find().lean(),
@@ -31,7 +31,8 @@ export const getAllProducts = async (): Promise<Products> => {
             TanqueCombustibleModel.find().lean(),
             CompresorModel.find().lean(),
             VasoRecuperadorModel.find().lean(),
-            EnfriadorAceiteModel.find().lean()
+            EnfriadorAceiteModel.find().lean(),
+            OtroModel.find().lean()
         ]);
 
         return {
@@ -46,7 +47,8 @@ export const getAllProducts = async (): Promise<Products> => {
             tanquesCombustible: toSerializableArray<TanqueCombustible>(tanquesCombustibleRaw),
             compresores: toSerializableArray<Compresor>(compresoresRaw),
             vasosRecuperadores: toSerializableArray<VasoRecuperador>(vasosRecuperadoresRaw),
-            enfriadoresAceite: toSerializableArray<EnfriadorAceite>(enfriadoresAceiteRaw)
+            enfriadoresAceite: toSerializableArray<EnfriadorAceite>(enfriadoresAceiteRaw),
+            otros: toSerializableArray<Otro>(otrosRaw)
         };
     } catch (err) {
         throw new Error("Error fetching data");
@@ -98,6 +100,9 @@ export const getProductById = async (
             case "EnfriadorAceite":
                 product = await EnfriadorAceiteModel.findById(id).lean<EnfriadorAceite>().exec();
                 break;
+            case "Otro":
+                product = await OtroModel.findById(id).lean<Otro>().exec();
+                break;
             default:
                 throw new Error("Tipo de producto no reconocido");
         }
@@ -124,7 +129,7 @@ export const updateProduct = async (productData: any) => {
             RadiadorModel, PanelModel, ElectroventiladorModel,
             CalefactorModel, EvaporadorModel, CondensadorModel, IntercoolerModel,
             EncauzadorModel, TanqueCombustibleModel, CompresorModel,
-            VasoRecuperadorModel, EnfriadorAceiteModel
+            VasoRecuperadorModel, EnfriadorAceiteModel, OtroModel
         ];
         for (const model of models) {
             const doc = await model.findById(id).lean();
@@ -189,6 +194,9 @@ export const updateProduct = async (productData: any) => {
                 case "enfriador-aceite":
                     newProduct = await EnfriadorAceiteModel.create({ ...baseFields, tipo: "enfriador-aceite", ...(dimensiones && { dimensiones }) });
                     break;
+                case "otro":
+                    newProduct = await OtroModel.create({ ...baseFields, tipo: "otro", ...(dimensiones && { dimensiones }) });
+                    break;
                 default:
                     throw new Error("Tipo de producto no reconocido");
             }
@@ -230,6 +238,9 @@ export const updateProduct = async (productData: any) => {
                     break;
                 case "enfriador-aceite":
                     await EnfriadorAceiteModel.findByIdAndDelete(id);
+                    break;
+                case "otro":
+                    await OtroModel.findByIdAndDelete(id);
                     break;
             }
 
@@ -316,6 +327,11 @@ export const updateProduct = async (productData: any) => {
             model = EnfriadorAceiteModel;
             updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
             break;
+        case "Otro":
+        case "otro":
+            model = OtroModel;
+            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
+            break;
         default:
             throw new Error("Tipo de producto no reconocido");
     }
@@ -371,6 +387,9 @@ function getModelByTipo<T>(tipo: string): { model: import("mongoose").Model<T> }
         case "Enfriador-aceite":
         case "enfriador-aceite":
             return { model: EnfriadorAceiteModel as import("mongoose").Model<T> };
+        case "Otro":
+        case "otro":
+            return { model: OtroModel as import("mongoose").Model<T> };
         default:
             throw new Error("Tipo de producto no reconocido");
     }
@@ -380,7 +399,7 @@ export async function increaseProductQuantity(id: string, tipo: string, amount: 
     await connectToDB();
 
     try {
-        const { model } = getModelByTipo<Radiador | Panel | Electroventilador>(tipo);
+        const { model } = getModelByTipo<Radiador | Panel | Electroventilador>(tipo);  
         const current = await model.findById(id).lean<Radiador | Panel | Electroventilador>();
         if (!current) throw new Error("Producto no encontrado");
 

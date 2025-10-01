@@ -42,7 +42,7 @@ export type TanqueCombustible = BaseProduct & { tipo: "tanque-combustible" };
 export type Compresor = BaseProduct & { tipo: "compresor" };
 export type VasoRecuperador = BaseProduct & { tipo: "vaso-recuperador" };
 export type EnfriadorAceite = BaseProduct & { tipo: "enfriador-aceite" };
-
+export type Otro = BaseProduct & { tipo: "otro" };
 export type Products = {
   radiadores: Radiador[];
   paneles: Panel[];
@@ -56,4 +56,5 @@ export type Products = {
   compresores: Compresor[];
   vasosRecuperadores: VasoRecuperador[];
   enfriadoresAceite: EnfriadorAceite[];
+  otros: Otro[];
 };
