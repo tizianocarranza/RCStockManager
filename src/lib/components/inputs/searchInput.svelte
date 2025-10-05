@@ -1,7 +1,7 @@
 <script>
 	import { search } from '$lib/icons';
 	import { slide } from 'svelte/transition';
-	import { products } from '$lib/shared/products.svelte';
+	import { products, filters } from '$lib/shared/products.svelte';
 	import { changeDisplay } from '$lib/logic/displayed';
 	import { debounce } from '$lib/logic/utils';
 
@@ -18,13 +18,37 @@
 		changeDisplay("search")
 	}
 
-	// Filter function
+	// Map UI labels to product collection keys
+	const filterLabelToKey = {
+		'Radiadores': 'radiadores',
+		'Paneles': 'paneles',
+		'Electroventiladores': 'electroventiladores',
+		'Calefactores': 'calefactores',
+		'Evaporadores': 'evaporadores',
+		'Condensadores': 'condensadores',
+		'Intercoolers': 'intercoolers',
+		'Encauzadores': 'encauzadores',
+		'Tanques de combustible': 'tanquesCombustible',
+		'Compresores': 'compresores',
+		'Vasos recuperadores': 'vasosRecuperadores',
+		'Enfriadores de aceite': 'enfriadoresAceite'
+	};
+
+	// Filter function (applies text search and type filter)
 	const filterProducts = (allProducts) => {
+		const query = userSearch.toLowerCase();
+		const selectedKey = filters.selectedFilter ? filterLabelToKey[filters.selectedFilter] : null;
+
+		const entries = Object.entries(allProducts).filter(([key]) => {
+			if (!selectedKey) return true;
+			return key === selectedKey;
+		});
+
 		return Object.fromEntries(
-			Object.entries(allProducts).map(([key, items]) => [
+			entries.map(([key, items]) => [
 				key,
 				items.filter((product) => {
-					const query = userSearch.toLowerCase();
+					if (query.trim() === '') return true;
 					return (
 						product.codigo.toLowerCase().includes(query) ||
 						product.detalle.toLowerCase().includes(query) ||
@@ -41,19 +65,25 @@
 		
 		// Small delay to show loading state for better UX
 		setTimeout(() => {
-			if (searchQuery.trim() === '') {
-				// If search is empty, show all products
+			// Always apply type filter; apply text filter only if query present
+			const hasQuery = searchQuery.trim() !== '';
+			if (!hasQuery && !filters.selectedFilter) {
 				products.filteredProducts = products.allProducts;
 			} else {
-				// Apply filter with the search query
 				products.filteredProducts = filterProducts(products.allProducts);
 			}
 			isSearching = false;
 		}, 100);
 	}, 500); // 500ms delay
 
-	// Watch for changes in userSearch and apply debounced filtering
 	$effect(() => {
+		// React to text query changes
+		debouncedFilter(userSearch);
+	});
+
+	$effect(() => {
+		// React to type filter changes (including clearing it)
+		const _selected = filters.selectedFilter;
 		debouncedFilter(userSearch);
 	});
 </script>
