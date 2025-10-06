@@ -60,7 +60,7 @@
 					</button>
 					{#if filters.selectedFilter}
 						<div
-							class="absolute left-[140%] text-nowrap flex items-center justify-center gap-5 text-xs border border-white rounded-sm pl-3 pr-1 py-1 font-normal italic"
+							class="hidden xl:flex absolute left-0 md:left-[140%] text-nowrap items-center justify-center gap-5 text-xs border border-white rounded-sm pl-3 pr-1 py-1 font-normal italic"
 							transition:slide={{ duration: 150 }}
 						>
 							<span>{filters.selectedFilter}</span>
@@ -80,15 +80,24 @@
 					class="flex flex-wrap max-h-full w-full my-auto gap-2 items-center justify-center overflow-auto"
 				>
 					{#each filterOptions as option}
-						<button
-							class="rounded-full px-3 h-7 text-xs font-semibold bg-gray-500/20 hover:bg-white/20 transition-colors {filters.selectedFilter ===
+						<div
+							class="flex items-center justify-center gap-2 rounded-full h-7 text-xs font-semibold bg-gray-500/20 transition-colors {filters.selectedFilter ===
 							option
 								? 'text-red-200 border border-red-200'
-								: 'text-white border-0'}"
-							onclick={() => handleFilterOptionClick(option)}
+								: 'text-white border-0 hover:bg-white/20'}"
 						>
-							<span>{option}</span>
-						</button>
+							<button class="px-3 h-full" onclick={() => handleFilterOptionClick(option)}>
+								<span>{option}</span>
+							</button>
+							{#if filters.selectedFilter === option}
+								<button
+									class="rounded-full flex items-center justify-center h-4 w-4 mr-1 hover:scale-120 transition-transform hover:bg-red-200"
+									onclick={handleRemoveFilterClick}
+								>
+									<img src={close} alt="Close icon." class="h-3" />
+								</button>
+							{/if}
+						</div>
 					{/each}
 				</div>
 				<button
