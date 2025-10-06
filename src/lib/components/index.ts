@@ -1,7 +1,6 @@
 // place files you want to import through the `$lib` alias in this folder.
 export { default as CloseButton } from "./buttons/closeButton.svelte";
 export { default as SearchInput } from "./inputs/searchInput.svelte"
-export { default as FilterButton } from "./buttons/filterButton.svelte"
 
 
 export { default as ProductCard } from "./cards/productCard.svelte";
