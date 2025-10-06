@@ -51,7 +51,7 @@
 
 				<div class="flex justify-center items-center relative">
 					<button
-						class="flex items-center justify-center h-2 hover:scale-110 transition-transform duration-300"
+						class="flex items-center justify-center h-2 hover:scale-120 transition-transform duration-300"
 						type="button"
 						onclick={handleFilterButtonClick}
 						title="Filtrar productos."
