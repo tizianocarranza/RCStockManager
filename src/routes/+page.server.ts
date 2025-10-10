@@ -1,6 +1,6 @@
 import type { Products } from "$lib/types/types";
 import { capitalize } from "$lib/logic/utils";
-import { getAllProducts, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
+import { getAllProducts, getProductsByType, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { connectToDB } from '$lib/server/db/db';
 import { selectedProduct } from "$lib/shared/products.svelte";
@@ -31,7 +31,24 @@ type BaseProduct = {
 };
 
 export async function load() {
-	const allProducts: Products = await getAllProducts();
+	// Only load radiadores initially for better performance
+	const radiadores = await getProductsByType('radiadores');
+	
+	const allProducts: Products = {
+		radiadores,
+		paneles: [],
+		electroventiladores: [],
+		calefactores: [],
+		evaporadores: [],
+		condensadores: [],
+		intercoolers: [],
+		encauzadores: [],
+		tanquesCombustible: [],
+		compresores: [],
+		vasosRecuperadores: [],
+		enfriadoresAceite: [],
+		otros: []
+	};
 
 	return {
 		allProducts
