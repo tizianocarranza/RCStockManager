@@ -55,6 +55,64 @@ export const getAllProducts = async (): Promise<Products> => {
     }
 };
 
+// New function for lazy loading products by type
+export const getProductsByType = async (productType: string): Promise<any[]> => {
+    await connectToDB();
+
+    try {
+        let products: any[] = [];
+        
+        switch (productType.toLowerCase()) {
+            case 'radiadores':
+                products = await RadiadorModel.find().lean();
+                break;
+            case 'paneles':
+                products = await PanelModel.find().lean();
+                break;
+            case 'electroventiladores':
+                products = await ElectroventiladorModel.find().lean();
+                break;
+            case 'calefactores':
+                products = await CalefactorModel.find().lean();
+                break;
+            case 'evaporadores':
+                products = await EvaporadorModel.find().lean();
+                break;
+            case 'condensadores':
+                products = await CondensadorModel.find().lean();
+                break;
+            case 'intercoolers':
+                products = await IntercoolerModel.find().lean();
+                break;
+            case 'encauzadores':
+                products = await EncauzadorModel.find().lean();
+                break;
+            case 'tanquescombustible':
+                products = await TanqueCombustibleModel.find().lean();
+                break;
+            case 'compresores':
+                products = await CompresorModel.find().lean();
+                break;
+            case 'vasosrecuperadores':
+                products = await VasoRecuperadorModel.find().lean();
+                break;
+            case 'enfriadoresaceite':
+                products = await EnfriadorAceiteModel.find().lean();
+                break;
+            case 'otros':
+                products = await OtroModel.find().lean();
+                break;
+            default:
+                throw new Error(`Tipo de producto no reconocido: ${productType}`);
+        }
+
+        return toSerializableArray(products);
+    } catch (err) {
+        console.error(`Error fetching ${productType}:`, err);
+        throw new Error(`Error fetching ${productType}`);
+    }
+};
+
 export const getProductById = async (
     id: string,
     tipo: string

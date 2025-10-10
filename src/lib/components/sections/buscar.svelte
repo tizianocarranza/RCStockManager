@@ -4,6 +4,7 @@
 	import { changeDisplay } from '$lib/logic/displayed';
 	import { filters } from '$lib/shared/products.svelte';
 	import { close, filter } from '$lib/icons';
+	import { loadProductsByType, isProductTypeLoaded, isProductTypeLoading } from '$lib/logic/lazyLoading';
 
 	const filterOptions = [
 		'Radiadores',
@@ -24,14 +25,27 @@
 		changeDisplay('search');
 		filters.showFilters = !filters.showFilters;
 	};
-	const handleFilterOptionClick = (option) => {
+	const handleFilterOptionClick = async (option) => {
 		changeDisplay('search');
 		filters.selectedFilter = option;
 		filters.showFilters = false;
+		
+		// Load products for this type if not already loaded
+		if (!isProductTypeLoaded(option)) {
+			try {
+				await loadProductsByType(option);
+			} catch (error) {
+				console.error('Error loading products:', error);
+			}
+		}
 	};
 	const handleRemoveFilterClick = (option) => {
 		changeDisplay('search');
-		filters.selectedFilter = null;
+		// Don't allow removing the filter - always keep a filter active
+		// If trying to remove current filter, set it back to Radiadores
+		if (filters.selectedFilter === option) {
+			filters.selectedFilter = 'Radiadores';
+		}
 		filters.showFilters = false;
 	};
 	const handleCloseFiltersClick = () => {
@@ -86,8 +100,11 @@
 								? 'text-red-200 border border-red-200'
 								: 'text-white border-0 hover:bg-white/20'}"
 						>
-							<button class="px-3 h-full" onclick={() => handleFilterOptionClick(option)}>
+							<button class="px-3 h-full flex items-center gap-1" onclick={() => handleFilterOptionClick(option)}>
 								<span>{option}</span>
+								{#if isProductTypeLoading(option)}
+									<div class="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
+								{/if}
 							</button>
 							{#if filters.selectedFilter === option}
 								<button

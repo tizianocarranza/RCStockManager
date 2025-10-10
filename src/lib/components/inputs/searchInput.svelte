@@ -37,10 +37,9 @@
 	// Filter function (applies text search and type filter)
 	const filterProducts = (allProducts) => {
 		const query = userSearch.toLowerCase();
-		const selectedKey = filters.selectedFilter ? filterLabelToKey[filters.selectedFilter] : null;
+		const selectedKey = filters.selectedFilter ? filterLabelToKey[filters.selectedFilter] : 'radiadores';
 
 		const entries = Object.entries(allProducts).filter(([key]) => {
-			if (!selectedKey) return true;
 			return key === selectedKey;
 		});
 
@@ -65,13 +64,8 @@
 		
 		// Small delay to show loading state for better UX
 		setTimeout(() => {
-			// Always apply type filter; apply text filter only if query present
-			const hasQuery = searchQuery.trim() !== '';
-			if (!hasQuery && !filters.selectedFilter) {
-				products.filteredProducts = products.allProducts;
-			} else {
-				products.filteredProducts = filterProducts(products.allProducts);
-			}
+			// Always apply type filter; never show all products
+			products.filteredProducts = filterProducts(products.allProducts);
 			isSearching = false;
 		}, 100);
 	}, 500); // 500ms delay
