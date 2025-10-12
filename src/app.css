@@ -140,6 +140,23 @@ button {
 	border: solid 2px var(--highlight-semi);
 }
 
+.sections-container--loading .section {
+	@apply pointer-events-none;
+	animation: loading 500ms ease-in-out alternate infinite;
+}
+
+@keyframes loading {
+	from {
+		transform: scale(1);
+		opacity: 100%;
+	}
+	to {
+		transform: scale(0.98);
+		opacity: 50%;
+	}
+}
+
+
 /* # Section Button # */
 .section-button {
 	@apply relative flex items-center justify-center p-5 rounded-xl not-last:transition-transform duration-300 hover:scale-110;

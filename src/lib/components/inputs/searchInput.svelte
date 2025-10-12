@@ -4,6 +4,7 @@
 	import { products, filters } from '$lib/shared/products.svelte';
 	import { changeDisplay } from '$lib/logic/displayed';
 	import { debounce } from '$lib/logic/utils';
+	import { app } from '$lib/shared/app.svelte';
 
 	let {
 		placeholder = 'Ingrese el código o nombre del producto',
@@ -60,6 +61,7 @@
 
 	// Debounced filter function to avoid unnecessary calls
 	const debouncedFilter = debounce((searchQuery) => {
+		app.loading = true;
 		isSearching = true;
 		
 		// Small delay to show loading state for better UX
@@ -67,6 +69,7 @@
 			// Always apply type filter; never show all products
 			products.filteredProducts = filterProducts(products.allProducts);
 			isSearching = false;
+			app.loading = false;
 		}, 100);
 	}, 500); // 500ms delay
 

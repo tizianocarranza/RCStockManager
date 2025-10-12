@@ -1,6 +1,6 @@
 import type { Products } from "$lib/types/types";
 import { capitalize } from "$lib/logic/utils";
-import { getAllProducts, getProductsByType, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
+import { getProductsByType, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { connectToDB } from '$lib/server/db/db';
 import { selectedProduct } from "$lib/shared/products.svelte";
@@ -17,6 +17,7 @@ import { Compresor as CompresorModel } from "$lib/server/models/Compresor";
 import { VasoRecuperador as VasoRecuperadorModel } from "$lib/server/models/VasoRecuperador";
 import { EnfriadorAceite as EnfriadorAceiteModel } from "$lib/server/models/EnfriadorAceite";
 import { Otro as OtroModel } from "$lib/server/models/Otro";
+import { app } from "$lib/shared/app.svelte";
 
 type BaseProduct = {
 	codigo?: string;
@@ -32,6 +33,7 @@ type BaseProduct = {
 
 export async function load() {
 	// Only load radiadores initially for better performance
+	app.loading = true;
 	const radiadores = await getProductsByType('radiadores');
 	
 	const allProducts: Products = {
@@ -49,7 +51,8 @@ export async function load() {
 		enfriadoresAceite: [],
 		otros: []
 	};
-
+	
+	app.loading = false;
 	return {
 		allProducts
 	}
