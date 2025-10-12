@@ -77,7 +77,6 @@ export async function loadProductsByType(filterLabel) {
             // Mark as loaded
             products.loadedTypes.add(apiKey);
             
-            console.log(`Loaded ${data.products.length} products of type: ${filterLabel}`);
             return true;
         } else {
             throw new Error(data.error || 'Failed to load products');

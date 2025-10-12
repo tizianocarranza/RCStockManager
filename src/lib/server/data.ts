@@ -205,9 +205,6 @@ export const updateProduct = async (productData: any) => {
         throw new Error("No se pudo encontrar el producto original");
     }
 
-    console.log(tipo.toLowerCase());
-    console.log(originalProduct.tipo.toLowerCase());
-
     // If the type has changed, we need to create a new document and delete the old one
     if (originalProduct.tipo.toLowerCase() !== tipo.toLowerCase()) {
         let newProduct;
