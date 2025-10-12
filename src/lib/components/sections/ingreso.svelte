@@ -5,9 +5,11 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { selectProduct } from '$lib/logic/products';
+	import { app } from '$lib/shared/app.svelte';
 	const { product } = selectedProduct;
 
 	function handleSubmit() {
+		app.loading = true;
 		return async ({ result }) => {
 			if (result.type === 'failure') {
 				popup.showError(result.data?.message || 'Error al registrar el ingreso');
@@ -18,6 +20,7 @@
 				}
 				await invalidateAll();
 			}
+			app.loading = false;
 		};
 	}
 </script>

@@ -5,10 +5,12 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { changeDisplay } from '$lib/logic/displayed';
+	import { app } from '$lib/shared/app.svelte';
 
 	const { product } = selectedProduct;
 
 	function handleSubmit() {
+		app.loading = true;
 		return async ({ result }) => {
 			if (result.type === 'failure') {
 				popup.showError(result.data?.message || 'Error al eliminar el producto');
@@ -17,6 +19,7 @@
 				await invalidateAll(); // Revalidate all data
 				changeDisplay(null); // Clear the selected product
 			}
+			app.loading = false;
 		};
 	}
 </script>

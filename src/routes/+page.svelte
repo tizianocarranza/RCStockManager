@@ -5,6 +5,8 @@
 	import { search, add, packageExport, packageImport, fileSearch, dollar } from '$lib/icons';
 	import { products } from '$lib/shared/products.svelte';
 	import { currentDisplayed } from '$lib/shared/displayed.svelte.js';
+	import { TbSectionSign } from 'react-icons/tb';
+	import { app } from '$lib/shared/app.svelte.js';
 
 	let { data } = $props();
 
@@ -26,6 +28,7 @@
 		class="sections-container relative h-full w-full gap-2 {currentDisplayed.product
 			? 'sections-container--product-display'
 			: ''}"
+		class:sections-container--loading={app.loading}
 	>
 		<!-- Buscar Section -->
 		<Buscar />

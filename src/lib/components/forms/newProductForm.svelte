@@ -5,9 +5,11 @@
 	import { invalidateAll } from '$app/navigation';
 	import { selectProduct } from '$lib/logic/products';
 	import { changeDisplay } from '$lib/logic/displayed';
+	import { app } from '$lib/shared/app.svelte';
 	let selectedType = $state('');
 
 	function handleSubmit() {
+		app.loading = true;
 		return async ({ result }) => {
 			if (result.type === 'failure') {
 				popup.showError(result.data?.message || 'Error al crear el producto');
@@ -20,6 +22,7 @@
 				}
 				await invalidateAll();
 			}
+			app.loading = false;
 		};
 	}
 </script>
@@ -76,21 +79,21 @@
 				<option value="Brazado">Brazado</option>
 			</datalist>
 			{#if selectedType === 'Radiador' || selectedType === 'Panel'}
-			<div class="flex flex-col gap-10">
-				<input
-				class="input input--large"
-				placeholder="Material"
-				list="materials"
-				name="material"
-				transition:slide
-				required
-				/>
-				<div class="flex gap-5">
-					<input class="input" placeholder="Alto" name="alto" type="number" />
-					<input class="input" placeholder="Ancho" name="ancho" type="number" />
-					<input class="input" placeholder="Espesor" name="espesor" type="number" />
+				<div class="flex flex-col gap-10">
+					<input
+						class="input input--large"
+						placeholder="Material"
+						list="materials"
+						name="material"
+						transition:slide
+						required
+					/>
+					<div class="flex gap-5">
+						<input class="input" placeholder="Alto" name="alto" type="number" />
+						<input class="input" placeholder="Ancho" name="ancho" type="number" />
+						<input class="input" placeholder="Espesor" name="espesor" type="number" />
+					</div>
 				</div>
-			</div>
 			{/if}
 			{#if selectedType === 'Panel'}
 				<datalist id="filas">
@@ -114,12 +117,7 @@
 				</div>
 			{:else if selectedType === 'Electroventilador'}
 				<div class="flex gap-5" transition:slide>
-					<input 
-						class="input input--large" 
-						placeholder="Diametro" 
-						name="diametro" 
-						type="number"
-					/>
+					<input class="input input--large" placeholder="Diametro" name="diametro" type="number" />
 					<input
 						class="input input--large"
 						placeholder="Numero de aspas"

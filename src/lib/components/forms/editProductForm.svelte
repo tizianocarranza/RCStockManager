@@ -6,25 +6,39 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { selectProduct } from '$lib/logic/products';
+	import { app } from '$lib/shared/app.svelte';
 
 	let product = selectedProduct.product;
 	let selectedType = $state(
-		product.tipo === 'radiador' ? 'Radiador'
-		: product.tipo === 'panel' ? 'Panel'
-		: product.tipo === 'electroventilador' ? 'Electroventilador'
-		: product.tipo === 'calefactor' ? 'Calefactor'
-		: product.tipo === 'evaporador' ? 'Evaporador'
-		: product.tipo === 'condensador' ? 'Condensador'
-		: product.tipo === 'intercooler' ? 'Intercooler'
-		: product.tipo === 'encauzador' ? 'Encauzador'
-		: product.tipo === 'tanque-combustible' ? 'Tanque de combustible'
-		: product.tipo === 'compresor' ? 'Compresor'
-		: product.tipo === 'vaso-recuperador' ? 'Vaso recuperador'
-		: product.tipo === 'enfriador-aceite' ? 'Enfriador de aceite'
-		: 'Otro'
+		product.tipo === 'radiador'
+			? 'Radiador'
+			: product.tipo === 'panel'
+				? 'Panel'
+				: product.tipo === 'electroventilador'
+					? 'Electroventilador'
+					: product.tipo === 'calefactor'
+						? 'Calefactor'
+						: product.tipo === 'evaporador'
+							? 'Evaporador'
+							: product.tipo === 'condensador'
+								? 'Condensador'
+								: product.tipo === 'intercooler'
+									? 'Intercooler'
+									: product.tipo === 'encauzador'
+										? 'Encauzador'
+										: product.tipo === 'tanque-combustible'
+											? 'Tanque de combustible'
+											: product.tipo === 'compresor'
+												? 'Compresor'
+												: product.tipo === 'vaso-recuperador'
+													? 'Vaso recuperador'
+													: product.tipo === 'enfriador-aceite'
+														? 'Enfriador de aceite'
+														: 'Otro'
 	);
 
 	function handleSubmit() {
+		app.loading = true;
 		return async ({ result }) => {
 			if (result.type === 'failure') {
 				popup.showError(result.data?.message || 'Error al actualizar el producto');
@@ -36,6 +50,7 @@
 				}
 				await invalidateAll();
 			}
+			app.loading = false;
 		};
 	}
 </script>

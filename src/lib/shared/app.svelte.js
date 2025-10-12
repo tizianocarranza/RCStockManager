@@ -1,0 +1,1 @@
+export let app = $state({ loading: false })
