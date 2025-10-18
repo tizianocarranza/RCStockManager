@@ -17,7 +17,7 @@ export type BaseProduct = {
   ultimoEgreso?: Movimiento;
 };
 
-type Material = "Aluminio y plastico" | "Cobre y bronce";
+type Material = "Aluminio y plastico" | "Cobre y bronce" | "Brazado";
 type TipoFilas = "Supertubular" | "Convencional";
 
 export type Radiador = BaseProduct & {

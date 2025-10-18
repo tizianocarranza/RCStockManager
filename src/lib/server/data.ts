@@ -411,7 +411,7 @@ export const updateProduct = async (productData: any) => {
     }
 
     try {
-        await model.findByIdAndUpdate(id, updateFields);
+        await model.findByIdAndUpdate(id, updateFields, { runValidators: true });
         const updated = await model.findById(id).lean();
         return toSerializableObject(updated);
     } catch (error) {
@@ -548,8 +548,6 @@ export async function decreaseProductQuantity(
 
     return { producto: product };
 }
-
-
 
 export const deleteProduct = async (id: string, tipo: string) => {
     await connectToDB();
