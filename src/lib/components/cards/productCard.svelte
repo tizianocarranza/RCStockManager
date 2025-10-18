@@ -4,14 +4,60 @@
 	import { selectedProduct } from '$lib/shared/products.svelte';
 
 	let product = $derived(selectedProduct.product);
+
+	function formatDate(fechaStr) {
+		if (!fechaStr) return null;
+		const fecha = new Date(fechaStr);
+		const ahora = new Date();
+
+		// Normalizamos las fechas a medianoche (sin hora)
+		const f = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+		const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+
+		const diffMs = hoy - f;
+		const diffDias = diffMs / (1000 * 60 * 60 * 24);
+
+		const hora = fecha.toLocaleTimeString('es-AR', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		});
+
+		if (diffDias === 0) {
+			return `Hoy a las ${hora}`;
+		} else if (diffDias === 1) {
+			return `Ayer a las ${hora}`;
+		} else if (diffDias > 1 && diffDias < 7) {
+			const dias = Math.floor(diffDias);
+			return `Hace ${dias} día${dias > 1 ? 's' : ''}`;
+		} else {
+			const fechaFormateada = fecha
+				.toLocaleDateString('es-AR', {
+					day: '2-digit',
+					month: 'short',
+					year: 'numeric'
+				})
+				.replace('.', '') // quita el punto en "oct."
+				.replace(',', ''); // quita coma extra si aparece
+
+			// Capitaliza la primera letra del mes (p. ej. "Oct" en vez de "oct")
+			return fechaFormateada;
+		}
+	}
 </script>
 
 <div class="flex h-full w-full gap-20">
 	<div
 		class="flex flex-col flex-wrap justify-between w-full lg:w-1/2 p-8 gap-10 bg-gray-500/20 rounded-lg shadow-lg border border-gray-300 hover:bg-gray-500/30 transition-all duration-300 h-auto text-gray-200 overflow-hidden"
 	>
-		<div class="relative flex flex-col gap-1 justify-center items-center w-full border-b pb-5">
-			<div class="absolute top-0 left-0 bold self-start {product.cantidad < 2 ? "text-red-300 animate-pulse" : product.cantidad < 3 ? "text-yellow-200" : "text-green-200"}">
+		<div class="relative flex flex-col gap-2 justify-center items-center w-full border-b pb-5">
+			<div
+				class="absolute top-0 left-0 bold self-start {product.cantidad < 2
+					? 'text-red-300 animate-pulse'
+					: product.cantidad < 3
+						? 'text-yellow-200'
+						: 'text-green-200'}"
+			>
 				{product.cantidad}
 			</div>
 			<p class="text-lg font-semibold text-red-200">{product.codigo}</p>
@@ -56,9 +102,23 @@
 			</div>
 		</div>
 
-		{#if product.notas}
-			<p class="text-sm italic">{product.notas}</p>
-		{/if}
+		<div class="flex flex-col md:flex-row justify-between gap-2">
+			{#if product.notas}
+				<p class="text-sm italic">{product.notas}</p>
+			{/if}
+			<div class="flex flex-col gap-2 text-xs font-normal text-nowrap" >
+				{#if product.ultimoIngreso}
+					<p class="text-green-300 italic" transition:slide>
+						<span class="text-sm font-bold pr-2">+{product.ultimoIngreso.cantidad}</span> {formatDate(product.ultimoIngreso.fecha)}
+					</p>
+				{/if}
+				{#if product.ultimoEgreso}
+					<p class="text-red-300 italic" transition:slide>
+						<span class="text-sm font-bold pr-2">-{product.ultimoEgreso.cantidad}</span> {formatDate(product.ultimoEgreso.fecha)}
+					</p>
+				{/if}
+			</div>
+		</div>
 	</div>
 
 	<!-- Product Dimensions -->
@@ -99,10 +159,3 @@
 		{/if}
 	</div>
 </div>
-
-<!-- 
-	
-
-
-
--->

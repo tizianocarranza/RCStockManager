@@ -13,7 +13,26 @@ import { Compresor as CompresorModel } from "./models/Compresor";
 import { VasoRecuperador as VasoRecuperadorModel } from "./models/VasoRecuperador";
 import { EnfriadorAceite as EnfriadorAceiteModel } from "./models/EnfriadorAceite";
 import { Otro as OtroModel } from "./models/Otro";
-import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite, Otro } from "$lib/types/types";
+import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite, Otro, Movimiento } from "$lib/types/types";
+
+
+
+export const modelMap: Record<string, any> = {
+    'radiador': RadiadorModel,
+    'panel': PanelModel,
+    'electroventilador': ElectroventiladorModel,
+    'calefactor': CalefactorModel,
+    'evaporador': EvaporadorModel,
+    'condensador': CondensadorModel,
+    'intercooler': IntercoolerModel,
+    'encauzador': EncauzadorModel,
+    'tanque-combustible': TanqueCombustibleModel,
+    'compresor': CompresorModel,
+    'vaso-recuperador': VasoRecuperadorModel,
+    'enfriador-aceite': EnfriadorAceiteModel,
+    'otro': OtroModel
+};
+
 
 export const getAllProducts = async (): Promise<Products> => {
     await connectToDB();
@@ -61,7 +80,7 @@ export const getProductsByType = async (productType: string): Promise<any[]> => 
 
     try {
         let products: any[] = [];
-        
+
         switch (productType.toLowerCase()) {
             case 'radiadores':
                 products = await RadiadorModel.find().lean();
@@ -450,60 +469,87 @@ function getModelByTipo<T>(tipo: string): { model: import("mongoose").Model<T> }
     }
 }
 
-export async function increaseProductQuantity(id: string, tipo: string, amount: number = 1) {
-    await connectToDB();
+export async function increaseProductQuantity(
+    id: string,
+    tipo: string,
+    amount: number
+) {
+
+    const Model = modelMap[tipo.toLowerCase()];
+    if (!Model) {
+        console.error('Modelo no encontrado para tipo:', tipo);
+        throw new Error('Tipo de producto no válido');
+    }
+
+    const product = await Model.findById(id);
+    if (!product) {
+        console.error('Producto no encontrado con id:', id);
+        throw new Error('Producto no encontrado');
+    }
+
+    product.cantidad += amount;
+
+    // Registrar último ingreso
+    product.ultimoIngreso = {
+        fecha: new Date(),
+        cantidad: amount
+    };
+
+    if (!product.ultimoEgreso?.fecha || !product.ultimoEgreso?.cantidad) {
+        product.ultimoEgreso = undefined;
+    }
 
     try {
-        const { model } = getModelByTipo<Radiador | Panel | Electroventilador>(tipo);  
-        const current = await model.findById(id).lean<Radiador | Panel | Electroventilador>();
-        if (!current) throw new Error("Producto no encontrado");
-
-        const nuevaCantidad = (current.cantidad || 0) + amount;
-
-        const updated = await model.findByIdAndUpdate(
-            id,
-            { cantidad: nuevaCantidad },
-            { new: true }
-        ).lean<Radiador | Panel | Electroventilador>();
-
-        return {
-            success: true,
-            message: `Cantidad aumentada a ${nuevaCantidad}`,
-            producto: toSerializableObject(updated)
-        };
-    } catch (error) {
-        console.error("Error al aumentar la cantidad:", error);
-        throw new Error("No se pudo actualizar el producto");
+        await product.save();
+    } catch (err) {
+        console.error('Error guardando producto (increase):', err);
+        throw err;
     }
+
+    return { producto: product };
 }
 
-export async function decreaseProductQuantity(id: string, tipo: string, amount: number = 1) {
-    await connectToDB();
+export async function decreaseProductQuantity(
+    id: string,
+    tipo: string,
+    amount: number
+) {
+    const Model = modelMap[tipo.toLowerCase()];
+    if (!Model) {
+        console.error('Modelo no encontrado para tipo:', tipo);
+        throw new Error('Tipo de producto no válido');
+    }
+
+    const product = await Model.findById(id);
+    if (!product) {
+        console.error('Producto no encontrado con id:', id);
+        throw new Error('Producto no encontrado');
+    }
+
+    product.cantidad -= amount;
+    if (product.cantidad < 0) product.cantidad = 0;
+
+    // Registrar último egreso
+    product.ultimoEgreso = {
+        fecha: new Date(),
+        cantidad: amount
+    };
+
+    if (!product.ultimoIngreso?.fecha || !product.ultimoIngreso?.cantidad) {
+        product.ultimoIngreso = undefined;
+    }
 
     try {
-        const { model } = getModelByTipo<Radiador | Panel | Electroventilador>(tipo);
-        const current = await model.findById(id).lean<Radiador | Panel | Electroventilador>();
-        if (!current) throw new Error("Producto no encontrado");
-
-        const nuevaCantidad = (current.cantidad || 0) - amount;
-        if (nuevaCantidad < 0) throw new Error("Cantidad no puede ser negativa");
-
-        const updated = await model.findByIdAndUpdate(
-            id,
-            { cantidad: nuevaCantidad },
-            { new: true }
-        ).lean<Radiador | Panel | Electroventilador>();
-
-        return {
-            success: true,
-            message: `Cantidad reducida a ${nuevaCantidad}`,
-            producto: toSerializableObject(updated)
-        };
-    } catch (error) {
-        console.error("Error al reducir la cantidad:", error);
-        throw new Error("No se pudo actualizar el producto");
+        await product.save();
+    } catch (err) {
+        console.error('Error guardando producto (decrease):', err);
+        throw err;
     }
+
+    return { producto: product };
 }
+
+
 
 export const deleteProduct = async (id: string, tipo: string) => {
     await connectToDB();
