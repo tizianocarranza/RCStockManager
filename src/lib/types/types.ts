@@ -1,29 +1,36 @@
-export type BaseProduct = {
-  _id: string;
-  codigo: string;
-  detalle: string;
-  tipo: "radiador" | "panel" | "electroventilador" | "otro";
+export type Movimiento = {
+  fecha: Date;
   cantidad: number;
+};
+
+export type BaseProduct = {
+  codigo?: string;
+  detalle?: string;
+  cantidad: number;
+  notas?: string;
   dimensiones?: {
     alto?: number;
     ancho?: number;
     espesor?: number;
   };
-  marca?: string;
-  notas?: string;
+  ultimoIngreso?: Movimiento;
+  ultimoEgreso?: Movimiento;
 };
+
+type Material = "Aluminio y plastico" | "Cobre y bronce";
+type TipoFilas = "Supertubular" | "Convencional";
 
 export type Radiador = BaseProduct & {
   tipo: "radiador";
-  material: "Aluminio y plastico" | "Cobre y bronce";
+  material: Material;
 };
 
 export type Panel = BaseProduct & {
   tipo: "panel";
-  material: "Aluminio y plastico" | "Cobre y bronce";
+  material: Material;
   filas: {
     numero: number;
-    tipo: "Supertubular" | "Convencional";
+    tipo: TipoFilas;
   };
 };
 
@@ -32,6 +39,7 @@ export type Electroventilador = BaseProduct & {
   aspas?: number;
   diametro?: number;
 };
+
 
 export type Calefactor = BaseProduct & { tipo: "calefactor" };
 export type Evaporador = BaseProduct & { tipo: "evaporador" };
@@ -43,6 +51,8 @@ export type Compresor = BaseProduct & { tipo: "compresor" };
 export type VasoRecuperador = BaseProduct & { tipo: "vaso-recuperador" };
 export type EnfriadorAceite = BaseProduct & { tipo: "enfriador-aceite" };
 export type Otro = BaseProduct & { tipo: "otro" };
+
+
 export type Products = {
   radiadores: Radiador[];
   paneles: Panel[];

@@ -22,3 +22,14 @@ export function debounce<T extends (...args: any[]) => any>(
 	};
 }
 
+export function formatStockLogDate(date: Date) {
+    const d = new Date(date);
+    return d.toLocaleString('es-AR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).replace(',', ''); // "16 Oct 2025 10:45"
+}
+
