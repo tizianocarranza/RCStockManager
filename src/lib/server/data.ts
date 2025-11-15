@@ -16,8 +16,42 @@ import { Otro as OtroModel } from "./models/Otro";
 import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite, Otro, Movimiento } from "$lib/types/types";
 
 
+export const typeMap: Record<string, string> = {
+	// Singular
+	'Radiador': 'radiador',
+	'Panel': 'panel',
+	'Electroventilador': 'electroventilador',
+	'Calefactor': 'calefactor',
+	'Evaporador': 'evaporador',
+	'Condensador': 'condensador',
+	'Intercooler': 'intercooler',
+	'Encauzador': 'encauzador',
+	'Tanque de combustible': 'tanque-combustible',
+	'Compresor': 'compresor',
+	'Vaso recuperador': 'vaso-recuperador',
+	'Enfriador de aceite': 'enfriador-aceite',
+	'Otro': 'otro',
+
+	// Plural
+	'Radiadores': 'radiador',
+	'Paneles': 'panel',
+	'Electroventiladores': 'electroventilador',
+	'Calefactores': 'calefactor',
+	'Evaporadores': 'evaporador',
+	'Condensadores': 'condensador',
+	'Intercoolers': 'intercooler',
+	'Encauzadores': 'encauzador',
+	'Tanques de combustible': 'tanque-combustible',
+	'Compresores': 'compresor',
+	'Vasos recuperadores': 'vaso-recuperador',
+	'Enfriadores de aceite': 'enfriador-aceite',
+	'Otros': 'otro',
+};
+
+
 
 export const modelMap: Record<string, any> = {
+    // Singular keys (for create/update)
     'radiador': RadiadorModel,
     'panel': PanelModel,
     'electroventilador': ElectroventiladorModel,
@@ -30,8 +64,9 @@ export const modelMap: Record<string, any> = {
     'compresor': CompresorModel,
     'vaso-recuperador': VasoRecuperadorModel,
     'enfriador-aceite': EnfriadorAceiteModel,
-    'otro': OtroModel
+    'otro': OtroModel,
 };
+
 
 
 export const getAllProducts = async (): Promise<Products> => {
@@ -55,20 +90,21 @@ export const getAllProducts = async (): Promise<Products> => {
         ]);
 
         return {
-            radiadores: toSerializableArray<Radiador>(radiadoresRaw),
-            paneles: toSerializableArray<Panel>(panelesRaw),
-            electroventiladores: toSerializableArray<Electroventilador>(electroventiladoresRaw),
-            calefactores: toSerializableArray<Calefactor>(calefactoresRaw),
-            evaporadores: toSerializableArray<Evaporador>(evaporadoresRaw),
-            condensadores: toSerializableArray<Condensador>(condensadoresRaw),
-            intercoolers: toSerializableArray<Intercooler>(intercoolersRaw),
-            encauzadores: toSerializableArray<Encauzador>(encauzadoresRaw),
-            tanquesCombustible: toSerializableArray<TanqueCombustible>(tanquesCombustibleRaw),
-            compresores: toSerializableArray<Compresor>(compresoresRaw),
-            vasosRecuperadores: toSerializableArray<VasoRecuperador>(vasosRecuperadoresRaw),
-            enfriadoresAceite: toSerializableArray<EnfriadorAceite>(enfriadoresAceiteRaw),
-            otros: toSerializableArray<Otro>(otrosRaw)
+            "Radiadores": toSerializableArray<Radiador>(radiadoresRaw),
+            "Paneles": toSerializableArray<Panel>(panelesRaw),
+            "Electroventiladores": toSerializableArray<Electroventilador>(electroventiladoresRaw),
+            "Calefactores": toSerializableArray<Calefactor>(calefactoresRaw),
+            "Evaporadores": toSerializableArray<Evaporador>(evaporadoresRaw),
+            "Condensadores": toSerializableArray<Condensador>(condensadoresRaw),
+            "Intercoolers": toSerializableArray<Intercooler>(intercoolersRaw),
+            "Encauzadores": toSerializableArray<Encauzador>(encauzadoresRaw),
+            "Tanques de combustible": toSerializableArray<TanqueCombustible>(tanquesCombustibleRaw),
+            "Compresores": toSerializableArray<Compresor>(compresoresRaw),
+            "Vasos recuperadores": toSerializableArray<VasoRecuperador>(vasosRecuperadoresRaw),
+            "Enfriadores de aceite": toSerializableArray<EnfriadorAceite>(enfriadoresAceiteRaw),
+            "Otros": toSerializableArray<Otro>(otrosRaw)
         };
+        
     } catch (err) {
         throw new Error("Error fetching data");
     }
@@ -76,60 +112,22 @@ export const getAllProducts = async (): Promise<Products> => {
 
 // New function for lazy loading products by type
 export const getProductsByType = async (productType: string): Promise<any[]> => {
-    await connectToDB();
+	await connectToDB();
 
-    try {
-        let products: any[] = [];
+	try {
+		const key = typeMap[productType];
+		const model = modelMap[key];
 
-        switch (productType.toLowerCase()) {
-            case 'radiadores':
-                products = await RadiadorModel.find().lean();
-                break;
-            case 'paneles':
-                products = await PanelModel.find().lean();
-                break;
-            case 'electroventiladores':
-                products = await ElectroventiladorModel.find().lean();
-                break;
-            case 'calefactores':
-                products = await CalefactorModel.find().lean();
-                break;
-            case 'evaporadores':
-                products = await EvaporadorModel.find().lean();
-                break;
-            case 'condensadores':
-                products = await CondensadorModel.find().lean();
-                break;
-            case 'intercoolers':
-                products = await IntercoolerModel.find().lean();
-                break;
-            case 'encauzadores':
-                products = await EncauzadorModel.find().lean();
-                break;
-            case 'tanquescombustible':
-                products = await TanqueCombustibleModel.find().lean();
-                break;
-            case 'compresores':
-                products = await CompresorModel.find().lean();
-                break;
-            case 'vasosrecuperadores':
-                products = await VasoRecuperadorModel.find().lean();
-                break;
-            case 'enfriadoresaceite':
-                products = await EnfriadorAceiteModel.find().lean();
-                break;
-            case 'otros':
-                products = await OtroModel.find().lean();
-                break;
-            default:
-                throw new Error(`Tipo de producto no reconocido: ${productType}`);
-        }
+		if (!model) {
+			throw new Error(`Tipo de producto no reconocido: ${productType}`);
+		}
 
-        return toSerializableArray(products);
-    } catch (err) {
-        console.error(`Error fetching ${productType}:`, err);
-        throw new Error(`Error fetching ${productType}`);
-    }
+		const products = await model.find().lean();
+		return toSerializableArray(products);
+	} catch (err) {
+		console.error(`Error fetching ${productType}:`, err);
+		throw new Error(`Error fetching ${productType}`);
+	}
 };
 
 export const getProductById = async (
@@ -196,222 +194,90 @@ export const getProductById = async (
 export const updateProduct = async (productData: any) => {
     await connectToDB();
 
-    const { id, tipo, codigo, detalle, cantidad, notas, material, dimensiones, filas, electroventilador } = productData;
+    const {
+        id,
+        tipo,
+        codigo,
+        detalle,
+        cantidad,
+        notas,
+        material,
+        dimensiones,
+        filas,
+        electroventilador,
+    } = productData;
 
-    // First, find the current product to get its original type
+    const normalizedTipo = tipo.toLowerCase();
+    const models = Object.values(modelMap);
+
+    // Find the original product
     let originalProduct: any = null;
-    try {
-        // Try to find the product in each collection until we find it
-        const models = [
-            RadiadorModel, PanelModel, ElectroventiladorModel,
-            CalefactorModel, EvaporadorModel, CondensadorModel, IntercoolerModel,
-            EncauzadorModel, TanqueCombustibleModel, CompresorModel,
-            VasoRecuperadorModel, EnfriadorAceiteModel, OtroModel
-        ];
-        for (const model of models) {
-            const doc = await model.findById(id).lean();
-            if (doc) {
-                originalProduct = toSerializableObject(doc);
-                break;
-            }
-        }
+    let originalModelKey: string | null = null;
 
-        if (!originalProduct) {
-            throw new Error("Producto no encontrado");
+    for (const [key, model] of Object.entries(modelMap)) {
+        const doc = await model.findById(id).lean();
+        if (doc) {
+            originalProduct = toSerializableObject(doc);
+            originalModelKey = key;
+            break;
         }
-    } catch (error) {
-        console.error("Error finding original product:", error);
-        throw new Error("No se pudo encontrar el producto original");
     }
 
-    // If the type has changed, we need to create a new document and delete the old one
-    if (originalProduct.tipo.toLowerCase() !== tipo.toLowerCase()) {
-        let newProduct;
-        const baseFields = { codigo, detalle, cantidad, notas };
+    if (!originalProduct) throw new Error("Producto no encontrado");
+
+    // --- Helper to build update fields ---
+    const getUpdateFields = (type: string) => {
+        const base = { codigo, detalle, cantidad, notas };
+        switch (type) {
+            case "radiador":
+                return { ...base, material, dimensiones };
+            case "panel":
+                return { ...base, material, dimensiones, filas };
+            case "electroventilador":
+                return {
+                    ...base,
+                    diametro: electroventilador?.diametro,
+                    aspas: electroventilador?.aspas,
+                    ...(dimensiones && { dimensiones }),
+                };
+            default:
+                return { ...base, ...(dimensiones && { dimensiones }) };
+        }
+    };
+
+    // --- If type changed: create new and delete old ---
+    if (originalProduct.tipo.toLowerCase() !== normalizedTipo) {
+        const newModel = modelMap[normalizedTipo];
+        const oldModel = modelMap[originalModelKey!];
+        if (!newModel) {
+            console.log("\n\n", tipo, "\n\n");
+            throw new Error("Tipo de producto no reconocido");
+        }
 
         try {
-            // Create the new product with the correct type
-            switch (tipo.toLowerCase()) {
-                case "radiador":
-                    newProduct = await RadiadorModel.create({ ...baseFields, tipo: "radiador", material, ...(dimensiones && { dimensiones }) });
-                    break;
-                case "panel":
-                    newProduct = await PanelModel.create({ ...baseFields, tipo: "panel", material, ...(dimensiones && { dimensiones }), ...(filas && { filas }) });
-                    break;
-                case "electroventilador":
-                    newProduct = await ElectroventiladorModel.create({ ...baseFields, tipo: "electroventilador", ...(dimensiones && { dimensiones }), ...(electroventilador && { diametro: electroventilador.diametro, aspas: electroventilador.aspas }) });
-                    break;
-                case "calefactor":
-                    newProduct = await CalefactorModel.create({ ...baseFields, tipo: "calefactor", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "evaporador":
-                    newProduct = await EvaporadorModel.create({ ...baseFields, tipo: "evaporador", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "condensador":
-                    newProduct = await CondensadorModel.create({ ...baseFields, tipo: "condensador", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "intercooler":
-                    newProduct = await IntercoolerModel.create({ ...baseFields, tipo: "intercooler", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "encauzador":
-                    newProduct = await EncauzadorModel.create({ ...baseFields, tipo: "encauzador", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "tanque-combustible":
-                    newProduct = await TanqueCombustibleModel.create({ ...baseFields, tipo: "tanque-combustible", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "compresor":
-                    newProduct = await CompresorModel.create({ ...baseFields, tipo: "compresor", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "vaso-recuperador":
-                    newProduct = await VasoRecuperadorModel.create({ ...baseFields, tipo: "vaso-recuperador", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "enfriador-aceite":
-                    newProduct = await EnfriadorAceiteModel.create({ ...baseFields, tipo: "enfriador-aceite", ...(dimensiones && { dimensiones }) });
-                    break;
-                case "otro":
-                    newProduct = await OtroModel.create({ ...baseFields, tipo: "otro", ...(dimensiones && { dimensiones }) });
-                    break;
-                default:
-                    throw new Error("Tipo de producto no reconocido");
-            }
+            const newProduct = await newModel.create({
+                ...getUpdateFields(normalizedTipo),
+                tipo: normalizedTipo,
+            });
 
-            // Delete the old product
-            switch (originalProduct.tipo.toLowerCase()) {
-                case "radiador":
-                    await RadiadorModel.findByIdAndDelete(id);
-                    break;
-                case "panel":
-                    await PanelModel.findByIdAndDelete(id);
-                    break;
-                case "electroventilador":
-                    await ElectroventiladorModel.findByIdAndDelete(id);
-                    break;
-                case "calefactor":
-                    await CalefactorModel.findByIdAndDelete(id);
-                    break;
-                case "evaporador":
-                    await EvaporadorModel.findByIdAndDelete(id);
-                    break;
-                case "condensador":
-                    await CondensadorModel.findByIdAndDelete(id);
-                    break;
-                case "intercooler":
-                    await IntercoolerModel.findByIdAndDelete(id);
-                    break;
-                case "encauzador":
-                    await EncauzadorModel.findByIdAndDelete(id);
-                    break;
-                case "tanque-combustible":
-                    await TanqueCombustibleModel.findByIdAndDelete(id);
-                    break;
-                case "compresor":
-                    await CompresorModel.findByIdAndDelete(id);
-                    break;
-                case "vaso-recuperador":
-                    await VasoRecuperadorModel.findByIdAndDelete(id);
-                    break;
-                case "enfriador-aceite":
-                    await EnfriadorAceiteModel.findByIdAndDelete(id);
-                    break;
-                case "otro":
-                    await OtroModel.findByIdAndDelete(id);
-                    break;
-            }
+            await oldModel.findByIdAndDelete(id);
 
             return toSerializableObject(newProduct);
         } catch (error) {
-            console.error("Error during type change:", error);
+            console.error("Error durante el cambio de tipo:", error);
             throw new Error("No se pudo cambiar el tipo del producto");
         }
     }
 
-    // If the type hasn't changed, just update the existing document
-    let model;
-    let updateFields = {};
-
-    switch (tipo) {
-        case "Radiador":
-        case "radiador":
-            model = RadiadorModel;
-            updateFields = { codigo, detalle, cantidad, notas, material, dimensiones };
-            break;
-        case "Panel":
-        case "panel":
-            model = PanelModel;
-            updateFields = { codigo, detalle, cantidad, notas, material, dimensiones, filas };
-            break;
-        case "Electroventilador":
-        case "electroventilador":
-            model = ElectroventiladorModel;
-            updateFields = {
-                codigo,
-                detalle,
-                cantidad,
-                notas,
-                diametro: electroventilador?.diametro,
-                aspas: electroventilador?.aspas,
-                ...(dimensiones && { dimensiones })
-            };
-            break;
-        case "Calefactor":
-        case "calefactor":
-            model = CalefactorModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "Evaporador":
-        case "evaporador":
-            model = EvaporadorModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "Condensador":
-        case "condensador":
-            model = CondensadorModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "Intercooler":
-        case "intercooler":
-            model = IntercoolerModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "Encauzador":
-        case "encauzador":
-            model = EncauzadorModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "TanqueCombustible":
-        case "Tanque-combustible":
-        case "tanque-combustible":
-            model = TanqueCombustibleModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "Compresor":
-        case "compresor":
-            model = CompresorModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "VasoRecuperador":
-        case "Vaso-recuperador":
-        case "vaso-recuperador":
-            model = VasoRecuperadorModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "EnfriadorAceite":
-        case "Enfriador-aceite":
-        case "enfriador-aceite":
-            model = EnfriadorAceiteModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        case "Otro":
-        case "otro":
-            model = OtroModel;
-            updateFields = { codigo, detalle, cantidad, notas, ...(dimensiones && { dimensiones }) };
-            break;
-        default:
-            throw new Error("Tipo de producto no reconocido");
+    // --- If type didn't change: just update existing document ---
+    const model = modelMap[normalizedTipo];
+    if (!model) {
+        console.log("\n\n", tipo, "\n\n");
+        throw new Error("Tipo de producto no reconocido");
     }
 
     try {
-        await model.findByIdAndUpdate(id, updateFields, { runValidators: true });
+        await model.findByIdAndUpdate(id, getUpdateFields(normalizedTipo), { runValidators: true });
         const updated = await model.findById(id).lean();
         return toSerializableObject(updated);
     } catch (error) {
@@ -421,47 +287,31 @@ export const updateProduct = async (productData: any) => {
 };
 
 function getModelByTipo<T>(tipo: string): { model: import("mongoose").Model<T> } {
-    switch (tipo) {
-        case "Radiador":
+    switch (tipo.toLowerCase()) {
         case "radiador":
             return { model: RadiadorModel as import("mongoose").Model<T> };
-        case "Panel":
         case "panel":
             return { model: PanelModel as import("mongoose").Model<T> };
-        case "Electroventilador":
         case "electroventilador":
             return { model: ElectroventiladorModel as import("mongoose").Model<T> };
-        case "Calefactor":
         case "calefactor":
             return { model: CalefactorModel as import("mongoose").Model<T> };
-        case "Evaporador":
         case "evaporador":
             return { model: EvaporadorModel as import("mongoose").Model<T> };
-        case "Condensador":
         case "condensador":
             return { model: CondensadorModel as import("mongoose").Model<T> };
-        case "Intercooler":
         case "intercooler":
             return { model: IntercoolerModel as import("mongoose").Model<T> };
-        case "Encauzador":
         case "encauzador":
             return { model: EncauzadorModel as import("mongoose").Model<T> };
-        case "TanqueCombustible":
-        case "Tanque-combustible":
         case "tanque-combustible":
             return { model: TanqueCombustibleModel as import("mongoose").Model<T> };
-        case "Compresor":
         case "compresor":
             return { model: CompresorModel as import("mongoose").Model<T> };
-        case "VasoRecuperador":
-        case "Vaso-recuperador":
         case "vaso-recuperador":
             return { model: VasoRecuperadorModel as import("mongoose").Model<T> };
-        case "EnfriadorAceite":
-        case "Enfriador-aceite":
         case "enfriador-aceite":
             return { model: EnfriadorAceiteModel as import("mongoose").Model<T> };
-        case "Otro":
         case "otro":
             return { model: OtroModel as import("mongoose").Model<T> };
         default:

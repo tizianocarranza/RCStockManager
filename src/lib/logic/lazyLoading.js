@@ -1,111 +1,72 @@
-import { products } from '$lib/shared/products.svelte';
-
-// Map UI labels to API keys
-const filterLabelToApiKey = {
-    'Radiadores': 'radiadores',
-    'Paneles': 'paneles',
-    'Electroventiladores': 'electroventiladores',
-    'Calefactores': 'calefactores',
-    'Evaporadores': 'evaporadores',
-    'Condensadores': 'condensadores',
-    'Intercoolers': 'intercoolers',
-    'Encauzadores': 'encauzadores',
-    'Tanques de combustible': 'tanquescombustible',
-    'Compresores': 'compresores',
-    'Vasos recuperadores': 'vasosrecuperadores',
-    'Enfriadores de aceite': 'enfriadoresaceite'
-};
-
-// Map API keys to product collection keys
-const apiKeyToCollectionKey = {
-    'radiadores': 'radiadores',
-    'paneles': 'paneles',
-    'electroventiladores': 'electroventiladores',
-    'calefactores': 'calefactores',
-    'evaporadores': 'evaporadores',
-    'condensadores': 'condensadores',
-    'intercoolers': 'intercoolers',
-    'encauzadores': 'encauzadores',
-    'tanquescombustible': 'tanquesCombustible',
-    'compresores': 'compresores',
-    'vasosrecuperadores': 'vasosRecuperadores',
-    'enfriadoresaceite': 'enfriadoresAceite'
-};
+import { products } from "$lib/shared/products.svelte";
 
 /**
- * Loads products of a specific type if not already loaded
+ * Load products by UI label (singular or plural)
  * @param {string} filterLabel - The UI label for the product type
- * @returns {Promise<boolean>} - Returns true if products were loaded, false if already loaded
+ * @returns {Promise<boolean>}
  */
 export async function loadProductsByType(filterLabel) {
-    const apiKey = filterLabelToApiKey[filterLabel];
-    const collectionKey = apiKeyToCollectionKey[apiKey];
-    
-    if (!apiKey || !collectionKey) {
-        console.error(`Unknown product type: ${filterLabel}`);
-        return false;
-    }
-
-    // Check if already loaded
-    if (products.loadedTypes.has(apiKey)) {
-        return false;
-    }
-
-    // Check if currently loading
-    if (products.loadingTypes.has(apiKey)) {
-        return false;
-    }
+    console.log('%c[loadProductsByType]', 'color: cyan; font-weight: bold;', `Called with filterLabel: "${filterLabel}"`);
 
     try {
-        // Mark as loading
-        products.loadingTypes.add(apiKey);
-        
-        // Fetch products from API
-        const response = await fetch(`/api/products/${apiKey}`);
-        
+        if (products.loadedTypes.has(filterLabel)) {
+            console.log('⚠️ Already loaded:', filterLabel);
+            return false;
+        }
+
+        if (products.loadingTypes.has(filterLabel)) {
+            console.log('⏳ Already loading:', filterLabel);
+            return false;
+        }
+
+        console.log('🚀 Starting fetch for:', filterLabel);
+        products.loadingTypes.add(filterLabel);
+
+        const response = await fetch(`/api/products/${encodeURIComponent(filterLabel)}`);
+        console.log('📡 Fetch complete. Response status:', response.status);
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+        console.log('📦 Received data:', data);
+
         if (data.success && data.products) {
-            // Add products to the collection
+            const collectionKey = filterLabel; // Use label as collection key on frontend
             products.allProducts[collectionKey] = data.products;
             products.filteredProducts[collectionKey] = data.products;
-            
-            // Mark as loaded
-            products.loadedTypes.add(apiKey);
-            
+
+            products.loadedTypes.add(filterLabel);
+            console.log('✅ Loaded products for:', filterLabel);
             return true;
         } else {
+            console.error('❌ Invalid data structure or empty products list:', data);
             throw new Error(data.error || 'Failed to load products');
         }
     } catch (error) {
-        console.error(`Error loading products for ${filterLabel}:`, error);
+        console.error(`🔥 Error loading products for "${filterLabel}":`, error);
         throw error;
     } finally {
-        // Remove from loading set
-        products.loadingTypes.delete(apiKey);
+        products.loadingTypes.delete(filterLabel);
+        console.log('🧹 Removed from loadingTypes:', Array.from(products.loadingTypes));
     }
 }
 
 /**
- * Checks if a product type is loaded
- * @param {string} filterLabel - The UI label for the product type
- * @returns {boolean}
+ * Checks if a product type is loaded by label
  */
 export function isProductTypeLoaded(filterLabel) {
-    const apiKey = filterLabelToApiKey[filterLabel];
-    return products.loadedTypes.has(apiKey);
+    const result = products.loadedTypes.has(filterLabel);
+    console.log('%c[isProductTypeLoaded]', 'color: lime; font-weight: bold;', filterLabel, 'loaded:', result);
+    return result;
 }
 
 /**
- * Checks if a product type is currently loading
- * @param {string} filterLabel - The UI label for the product type
- * @returns {boolean}
+ * Checks if a product type is currently loading by label
  */
 export function isProductTypeLoading(filterLabel) {
-    const apiKey = filterLabelToApiKey[filterLabel];
-    return products.loadingTypes.has(apiKey);
+    const result = products.loadingTypes.has(filterLabel);
+    console.log('%c[isProductTypeLoading]', 'color: orange; font-weight: bold;', filterLabel, 'loading:', result);
+    return result;
 }

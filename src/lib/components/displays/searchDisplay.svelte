@@ -6,19 +6,19 @@
 	import { popup } from '$lib/stores/popup';
 
 	let searchResults = $derived([
-		...(products.filteredProducts.radiadores || []),
-		...(products.filteredProducts.paneles || []),
-		...(products.filteredProducts.electroventiladores || []),
-		...(products.filteredProducts.calefactores || []),
-		...(products.filteredProducts.evaporadores || []),
-		...(products.filteredProducts.condensadores || []),
-		...(products.filteredProducts.intercoolers || []),
-		...(products.filteredProducts.encauzadores || []),
-		...(products.filteredProducts.tanquesCombustible || []),
-		...(products.filteredProducts.compresores || []),
-		...(products.filteredProducts.vasosRecuperadores || []),
-		...(products.filteredProducts.enfriadoresAceite || []),
-		...(products.filteredProducts.otros || [])
+		...(products.filteredProducts["Radiadores"] || []),
+		...(products.filteredProducts["Paneles"] || []),
+		...(products.filteredProducts["Electroventiladores"] || []),
+		...(products.filteredProducts["Calefactores"] || []),
+		...(products.filteredProducts["Evaporadores"] || []),
+		...(products.filteredProducts["Condensadores"] || []),
+		...(products.filteredProducts["Intercoolers"] || []),
+		...(products.filteredProducts["Encauzadores"] || []),
+		...(products.filteredProducts["Tanques de combustible"] || []),
+		...(products.filteredProducts["Compresores"] || []),
+		...(products.filteredProducts["Vasos recuperadores"] || []),
+		...(products.filteredProducts["Enfriadores de aceite"] || []),
+		...(products.filteredProducts["Otros"] || [])
 	]);
 </script>
 
