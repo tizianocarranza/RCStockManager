@@ -14,20 +14,22 @@
 	import { selectedProduct } from '$lib/shared/products.svelte';
 	import { selectProduct } from '$lib/logic/products';
 	import { products } from '$lib/shared/products.svelte';
+	import { currentDisplayed } from '$lib/shared/displayed.svelte';
 
 	const handleRefreshClick = async () => {
 		app.loading = true;
 		await invalidateAll(); // Revalidate all data
 		try {
+			products.loadedTypes = new Set();
 			await loadProductsByType(filters.selectedFilter);
-			if(selectedProduct.product) {
-				const updatedProduct = products.filteredProducts[filters.selectedFilter.toLowerCase()].find(product => product._id === selectedProduct.product._id);
+			if(selectedProduct.product && currentDisplayed.product) {
+				const updatedProduct = products.filteredProducts[filters.selectedFilter].find(product => product._id === selectedProduct.product._id);
 				selectProduct(updatedProduct);
 			}
+			app.lastUpdated = new Date();
 		} catch (error) {
 			console.error('Error refreshing products:', error);
 		}
-		app.loading = false;
 	};
 
 	const filterOptions = [
@@ -72,7 +74,8 @@
 
 <section class="section buscar">
 	<button
-		class="absolute top-4 left-4 hidden lg:flex items-center justify-center transition-opacity duration-300 hover:opacity-80"
+		class="absolute h-[20px] top-2 left-2 hidden lg:flex items-center justify-center transition-opacity duration-300 hover:opacity-80 disabled:animate-spin"
+		disabled={app.loading}
 		transition:slide
 		onclick={handleRefreshClick}
 	>

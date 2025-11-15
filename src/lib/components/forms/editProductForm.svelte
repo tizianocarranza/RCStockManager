@@ -97,7 +97,7 @@
 					<option value="Tanque de combustible">Tanque de combustible</option>
 					<option value="Compresor">Compresor</option>
 					<option value="Vaso recuperador">Vaso recuperador</option>
-					<option value="Enfriador de aceite">Enfriador de aceite</option>
+					<option value="enfriador">Enfriador de aceite</option>
 					<option value="Otro">Otro</option>
 				</datalist>
 			</div>

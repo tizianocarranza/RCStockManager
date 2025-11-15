@@ -43,8 +43,8 @@
 	const filterProducts = (allProducts) => {
 		const query = userSearch.toLowerCase();
 		const selectedKey = filters.selectedFilter
-			? filterLabelToKey[filters.selectedFilter]
-			: 'radiadores';
+			? filters.selectedFilter
+			: 'Radiadores';
 
 		const entries = Object.entries(allProducts).filter(([key]) => {
 			return key === selectedKey;
@@ -83,13 +83,13 @@
 		// React to text query changes
 		debouncedFilter(userSearch);
 	});
-
+	
 	$effect(() => {
 		// React to type filter changes (including clearing it)
 		const _selected = filters.selectedFilter;
 		debouncedFilter(userSearch);
 	});
-
+	
 	$effect(() => {
 		// Re-run debounced filter when the product list updates
 		const _allProducts = products.allProducts;

@@ -54,17 +54,17 @@ export type Otro = BaseProduct & { tipo: "otro" };
 
 
 export type Products = {
-  radiadores: Radiador[];
-  paneles: Panel[];
-  electroventiladores: Electroventilador[];
-  calefactores: Calefactor[];
-  evaporadores: Evaporador[];
-  condensadores: Condensador[];
-  intercoolers: Intercooler[];
-  encauzadores: Encauzador[];
-  tanquesCombustible: TanqueCombustible[];
-  compresores: Compresor[];
-  vasosRecuperadores: VasoRecuperador[];
-  enfriadoresAceite: EnfriadorAceite[];
-  otros: Otro[];
+  "Radiadores": Radiador[];
+  "Paneles": Panel[];
+  "Electroventiladores": Electroventilador[];
+  "Calefactores": Calefactor[];
+  "Evaporadores": Evaporador[];
+  "Condensadores": Condensador[];
+  "Intercoolers": Intercooler[];
+  "Encauzadores": Encauzador[];
+  "Tanques de combustible": TanqueCombustible[];
+  "Compresores": Compresor[];
+  "Vasos recuperadores": VasoRecuperador[];
+  "Enfriadores de aceite": EnfriadorAceite[];
+  "Otros": Otro[];
 };

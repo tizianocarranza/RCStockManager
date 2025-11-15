@@ -1,1 +1,1 @@
-export let app = $state({ loading: false })
+export let app = $state({ loading: false, lastUpdated: new Date() })

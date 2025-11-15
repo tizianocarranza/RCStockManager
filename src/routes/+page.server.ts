@@ -1,6 +1,6 @@
 import type { Products } from "$lib/types/types";
 import { capitalize } from "$lib/logic/utils";
-import { getProductsByType, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct } from "$lib/server/data";
+import { getProductsByType, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct, typeMap } from "$lib/server/data";
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { connectToDB } from '$lib/server/db/db';
 import { selectedProduct } from "$lib/shared/products.svelte";
@@ -34,24 +34,24 @@ type BaseProduct = {
 export async function load() {
 	// Only load radiadores initially for better performance
 	app.loading = true;
-	const radiadores = await getProductsByType('radiadores');
-	
+	const radiadores = await getProductsByType('Radiadores');
+
 	const allProducts: Products = {
-		radiadores,
-		paneles: [],
-		electroventiladores: [],
-		calefactores: [],
-		evaporadores: [],
-		condensadores: [],
-		intercoolers: [],
-		encauzadores: [],
-		tanquesCombustible: [],
-		compresores: [],
-		vasosRecuperadores: [],
-		enfriadoresAceite: [],
-		otros: []
+		"Radiadores": radiadores,
+		"Paneles": [],
+		"Electroventiladores": [],
+		"Calefactores": [],
+		"Evaporadores": [],
+		"Condensadores": [],
+		"Intercoolers": [],
+		"Encauzadores": [],
+		"Tanques de combustible": [],
+		"Compresores": [],
+		"Vasos recuperadores": [],
+		"Enfriadores de aceite": [],
+		"Otros": []
 	};
-	
+
 	app.loading = false;
 	return {
 		allProducts
@@ -110,7 +110,7 @@ export const actions: Actions = {
 			switch (tipo) {
 				case 'radiador':
 					const materialRadiador = data.get('material')?.toString();
-					if (!materialRadiador) return fail(400, { 
+					if (!materialRadiador) return fail(400, {
 						success: false,
 						message: 'El material es requerido para Radiador.'
 					});
@@ -118,7 +118,7 @@ export const actions: Actions = {
 					break;
 				case 'panel':
 					const materialPanel = data.get('material')?.toString();
-					if (!materialPanel) return fail(400, { 
+					if (!materialPanel) return fail(400, {
 						success: false,
 						message: 'El material es requerido para Panel.'
 					});
@@ -175,7 +175,7 @@ export const actions: Actions = {
 					newProduct = await OtroModel.create({ ...base, tipo: 'otro' });
 					break;
 				default:
-					return fail(400, { 
+					return fail(400, {
 						success: false,
 						message: 'Tipo de producto no válido.'
 					});
@@ -188,7 +188,7 @@ export const actions: Actions = {
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { 
+			return fail(500, {
 				success: false,
 				message: 'Error al guardar el producto.'
 			});
@@ -198,25 +198,14 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		// Normalizar y mapear el tipo
-		let tipo = formData.get('tipo')?.toString().toLowerCase();
-		switch (tipo) {
-			case 'tanque de combustible':
-				tipo = 'tanque-combustible';
-				break;
-			case 'enfriador de aceite':
-				tipo = 'enfriador-aceite';
-				break;
-			case 'vaso recuperador':
-				tipo = 'vaso-recuperador';
-				break;
-			// Puedes agregar más mapeos si es necesario
-		}
+		const rawTipo = formData.get('tipo')?.toString() || '';
+		const tipo = typeMap[rawTipo] ?? rawTipo.trim().toLowerCase().replace(/\s+/g, '-');
 
 		// Build dimensions object only if values are provided
 		const alto = formData.get('alto')?.toString();
 		const ancho = formData.get('ancho')?.toString();
 		const espesor = formData.get('espesor')?.toString();
-		
+
 		const dimensiones: { alto?: number; ancho?: number; espesor?: number } = {};
 		if (alto) dimensiones.alto = Number(alto);
 		if (ancho) dimensiones.ancho = Number(ancho);
@@ -257,7 +246,7 @@ export const actions: Actions = {
 			};
 		} catch (error) {
 			console.error('Error al actualizar el producto:', error);
-			return fail(500, { 
+			return fail(500, {
 				success: false,
 				message: 'Error al actualizar el producto.'
 			});
@@ -266,10 +255,10 @@ export const actions: Actions = {
 	increaseProductQuantity: async ({ request }) => {
 		const formData = await request.formData();
 		const id = formData.get('id')?.toString();
-		const tipo = capitalize(formData.get('tipo')?.toString() || '');
+		const tipo = formData.get('tipo')?.toString().toLowerCase();
 		const amount = Number(formData.get('stock-in'));
 
-		if (!id || !tipo || !amount) return fail(400, { 
+		if (!id || !tipo || !amount) return fail(400, {
 			success: false,
 			message: 'ID, tipo y cantidad son requeridos'
 		});
@@ -283,7 +272,7 @@ export const actions: Actions = {
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { 
+			return fail(500, {
 				success: false,
 				message: 'No se pudo aumentar la cantidad'
 			});
@@ -296,7 +285,7 @@ export const actions: Actions = {
 		const tipo = capitalize(formData.get('tipo')?.toString() || '');
 		const amount = Number(formData.get('stock-out'));
 
-		if (!id || !tipo || !amount) return fail(400, { 
+		if (!id || !tipo || !amount) return fail(400, {
 			success: false,
 			message: 'ID, tipo y cantidad son requeridos'
 		});
@@ -310,7 +299,7 @@ export const actions: Actions = {
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { 
+			return fail(500, {
 				success: false,
 				message: 'No se pudo reducir la cantidad'
 			});
@@ -334,7 +323,7 @@ export const actions: Actions = {
 			// Puedes agregar más mapeos si es necesario
 		}
 
-		if (!id || !tipo) return fail(400, { 
+		if (!id || !tipo) return fail(400, {
 			success: false,
 			message: 'ID y tipo son requeridos'
 		});
@@ -348,7 +337,7 @@ export const actions: Actions = {
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, { 
+			return fail(500, {
 				success: false,
 				message: 'No se pudo eliminar el producto.'
 			});
