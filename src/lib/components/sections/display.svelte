@@ -12,7 +12,7 @@
 </script>
 
 <section class="section display">
-	<div class="absolute inset-0 flex items-end justify-end pointer-events-none select-none z-0">
+	<div class="absolute inset-0 px-1 flex items-end justify-end pointer-events-none select-none z-0">
 		<p class="last-updated-watermark text-8xl md:text-[200px]">
 			{formatTime(app.lastUpdated)}
 		</p>
