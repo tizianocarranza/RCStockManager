@@ -6,6 +6,7 @@
 	import { currentDisplayed } from '$lib/shared/displayed.svelte';
 	import { debounce } from '$lib/logic/utils';
 	import { app } from '$lib/shared/app.svelte';
+	import { onMount } from 'svelte';
 
 	let {
 		placeholder = 'Ingrese el código o nombre del producto',
@@ -94,6 +95,12 @@
 		// Re-run debounced filter when the product list updates
 		const _allProducts = products.allProducts;
 		debouncedFilter(userSearch);
+	});
+	$effect(() => {
+		const _currentDisplayed = currentDisplayed;
+		if(currentDisplayed.search) {
+			debouncedFilter(userSearch);
+		}
 	});
 </script>
 

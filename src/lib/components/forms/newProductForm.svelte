@@ -6,21 +6,34 @@
 	import { selectProduct } from '$lib/logic/products';
 	import { changeDisplay } from '$lib/logic/displayed';
 	import { app } from '$lib/shared/app.svelte';
+	import { selectedProduct, products } from '$lib/shared/products.svelte';
+	import { modelTypeToCategoryLabel } from '$lib/logic/utils';
+	import { loadProductsByType } from '$lib/logic/lazyLoading';
 	let selectedType = $state('');
 
 	function handleSubmit() {
 		app.loading = true;
 		return async ({ result }) => {
+			const r = result.data?.actionResult;
+
 			if (result.type === 'failure') {
-				popup.showError(result.data?.message || 'Error al crear el producto');
+				popup.showError(r?.message || 'Error al crear el producto');
 			} else if (result.type === 'success') {
-				popup.showSuccess(result.data?.message || 'Producto creado exitosamente');
+				popup.showSuccess(r?.message || 'Producto creado exitosamente');
 				selectedType = '';
-				if (result.data?.producto) {
-					selectProduct(result.data.producto);
+				if (r?.producto) {
+					selectProduct(r.producto);
 					changeDisplay('product');
 				}
-				await invalidateAll();
+				const product = selectedProduct.product;
+				const productType = product.tipo;
+				const categoryLabel = modelTypeToCategoryLabel[productType];
+
+				// Check structure
+				if (products.loadedTypes.has(categoryLabel)) {
+					products.loadedTypes.delete(categoryLabel);
+					await loadProductsByType(categoryLabel);
+				}
 			}
 			app.loading = false;
 		};

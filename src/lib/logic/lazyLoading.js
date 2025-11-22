@@ -58,6 +58,7 @@ export async function loadProductsByType(filterLabel) {
  */
 export function isProductTypeLoaded(filterLabel) {
     const result = products.loadedTypes.has(filterLabel);
+    if(products.loadedTypes.has(filterLabel))  console.log('%c[isProductTypeLoaded]', 'color: lime; font-weight: bold;', filterLabel, 'Products:', products.filteredProducts.filterLabel);
     console.log('%c[isProductTypeLoaded]', 'color: lime; font-weight: bold;', filterLabel, 'loaded:', result);
     return result;
 }
