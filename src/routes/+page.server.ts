@@ -1,5 +1,5 @@
 import type { Products } from "$lib/types/types";
-import { capitalize } from "$lib/logic/utils";
+import { capitalize, formatTime } from "$lib/logic/utils";
 import { getProductsByType, updateProduct, increaseProductQuantity, decreaseProductQuantity, deleteProduct, typeMap } from "$lib/server/data";
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { connectToDB } from '$lib/server/db/db';
@@ -33,6 +33,7 @@ type BaseProduct = {
 
 export async function load() {
 	// Only load radiadores initially for better performance
+	console.log("\n\n\nLoading products\n\n\n", formatTime(new Date()));
 	app.loading = true;
 	const radiadores = await getProductsByType('Radiadores');
 
@@ -69,8 +70,10 @@ export const actions: Actions = {
 		// Convertir a minúsculas para asegurar coincidencia
 		const tipo = data.get('tipo')?.toString().toLowerCase();
 		if (!tipo) return fail(400, {
-			success: false,
-			message: 'El tipo de producto es requerido.'
+			actionResult: {
+				success: false,
+				message: 'El tipo de producto es requerido.'
+			}
 		});
 
 		const base: BaseProduct = {
@@ -111,16 +114,20 @@ export const actions: Actions = {
 				case 'radiador':
 					const materialRadiador = data.get('material')?.toString();
 					if (!materialRadiador) return fail(400, {
-						success: false,
-						message: 'El material es requerido para Radiador.'
+						actionResult: {
+							success: false,
+							message: 'El material es requerido para Radiador.'
+						}
 					});
 					newProduct = await RadiadorModel.create({ ...base, tipo: 'radiador', material: materialRadiador });
 					break;
 				case 'panel':
 					const materialPanel = data.get('material')?.toString();
 					if (!materialPanel) return fail(400, {
-						success: false,
-						message: 'El material es requerido para Panel.'
+						actionResult: {
+							success: false,
+							message: 'El material es requerido para Panel.'
+						}
 					});
 					const numero = data.get('numero-filas')?.toString();
 					const tipoFila = data.get('tipo-filas')?.toString();
@@ -176,21 +183,27 @@ export const actions: Actions = {
 					break;
 				default:
 					return fail(400, {
-						success: false,
-						message: 'Tipo de producto no válido.'
+						actionResult: {
+							success: false,
+							message: 'Tipo de producto no válido.'
+						}
 					});
 			}
 
 			return {
-				success: true,
-				message: 'Producto creado exitosamente.',
-				producto: JSON.parse(JSON.stringify(newProduct))
+				actionResult: {
+					success: true,
+					message: 'Producto creado exitosamente.',
+					producto: JSON.parse(JSON.stringify(newProduct))
+				}
 			};
 		} catch (error) {
 			console.error(error);
 			return fail(500, {
-				success: false,
-				message: 'Error al guardar el producto.'
+				actionResult: {
+					success: false,
+					message: 'Error al guardar el producto.'
+				}
 			});
 		}
 	},
@@ -240,15 +253,19 @@ export const actions: Actions = {
 			});
 
 			return {
-				success: true,
-				message: 'Producto actualizado exitosamente.',
-				producto: JSON.parse(JSON.stringify(result))
+				actionResult: {
+					success: true,
+					message: 'Producto actualizado exitosamente.',
+					producto: JSON.parse(JSON.stringify(result))
+				}
 			};
 		} catch (error) {
 			console.error('Error al actualizar el producto:', error);
 			return fail(500, {
-				success: false,
-				message: 'Error al actualizar el producto.'
+				actionResult: {
+					success: false,
+					message: 'Error al actualizar el producto.'
+				}
 			});
 		}
 	},
@@ -258,24 +275,30 @@ export const actions: Actions = {
 		const tipo = formData.get('tipo')?.toString().toLowerCase();
 		const amount = Number(formData.get('stock-in'));
 
-		if (!id || !tipo || !amount) return fail(400, {
-			success: false,
-			message: 'ID, tipo y cantidad son requeridos'
-		});
+		if (!id || !tipo || !amount) return {
+			actionResult: {
+				success: false,
+				message: 'ID, tipo y cantidad son requeridos'
+			}
+		};
 
 		try {
 			const result = await increaseProductQuantity(id, tipo, amount);
 			return {
-				success: true,
-				message: `Stock aumentado en ${amount} unidades.`,
-				producto: JSON.parse(JSON.stringify(result.producto))
+				actionResult: {
+					success: true,
+					message: `Stock aumentado en ${amount} unidades.`,
+					producto: JSON.parse(JSON.stringify(result.producto))
+				}
 			};
 		} catch (error) {
 			console.error(error);
-			return fail(500, {
-				success: false,
-				message: 'No se pudo aumentar la cantidad'
-			});
+			return {
+				actionResult: {
+					success: false,
+					message: 'No se pudo aumentar la cantidad'
+				}
+			};
 		}
 	},
 
@@ -286,22 +309,28 @@ export const actions: Actions = {
 		const amount = Number(formData.get('stock-out'));
 
 		if (!id || !tipo || !amount) return fail(400, {
-			success: false,
-			message: 'ID, tipo y cantidad son requeridos'
+			actionResult: {
+				success: false,
+				message: 'ID, tipo y cantidad son requeridos'
+			}
 		});
 
 		try {
 			const result = await decreaseProductQuantity(id, tipo, amount);
 			return {
-				success: true,
-				message: `Stock reducido en ${amount} unidades.`,
-				producto: JSON.parse(JSON.stringify(result.producto))
+				actionResult: {
+					success: true,
+					message: `Stock reducido en ${amount} unidades.`,
+					producto: JSON.parse(JSON.stringify(result.producto))
+				}
 			};
 		} catch (error) {
 			console.error(error);
 			return fail(500, {
-				success: false,
-				message: 'No se pudo reducir la cantidad'
+				actionResult: {
+					success: false,
+					message: 'No se pudo reducir la cantidad'
+				}
 			});
 		}
 	},
@@ -324,22 +353,28 @@ export const actions: Actions = {
 		}
 
 		if (!id || !tipo) return fail(400, {
-			success: false,
-			message: 'ID y tipo son requeridos'
+			actionResult: {
+				success: false,
+				message: 'ID y tipo son requeridos'
+			}
 		});
 
 		try {
 			const result = await deleteProduct(id, tipo);
 			return {
-				success: true,
-				message: 'Producto eliminado exitosamente.',
-				producto: JSON.parse(JSON.stringify(result.producto))
+				actionResult: {
+					success: true,
+					message: 'Producto eliminado exitosamente.',
+					producto: JSON.parse(JSON.stringify(result.producto))
+				}
 			};
 		} catch (error) {
 			console.error(error);
 			return fail(500, {
-				success: false,
-				message: 'No se pudo eliminar el producto.'
+				actionResult: {
+					success: false,
+					message: 'No se pudo eliminar el producto.'
+				}
 			});
 		}
 	}

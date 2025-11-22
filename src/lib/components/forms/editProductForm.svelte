@@ -1,12 +1,14 @@
 <script>
 	import { changeDisplay } from '$lib/logic/displayed';
-	import { selectedProduct } from '$lib/shared/products.svelte';
 	import { slide } from 'svelte/transition';
 	import { popup } from '$lib/stores/popup';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { selectProduct } from '$lib/logic/products';
 	import { app } from '$lib/shared/app.svelte';
+	import { selectedProduct, products } from '$lib/shared/products.svelte';
+	import { modelTypeToCategoryLabel } from '$lib/logic/utils';
+	import { loadProductsByType } from '$lib/logic/lazyLoading';
 
 	let product = selectedProduct.product;
 	let selectedType = $state(
@@ -40,15 +42,43 @@
 	function handleSubmit() {
 		app.loading = true;
 		return async ({ result }) => {
+			const r = result.data?.actionResult;
+
 			if (result.type === 'failure') {
-				popup.showError(result.data?.message || 'Error al actualizar el producto');
+				popup.showError(r?.message || 'Error al actualizar el producto');
 			} else if (result.type === 'success') {
-				popup.showSuccess(result.data?.message || 'Producto actualizado exitosamente');
-				if (result.data?.producto) {
-					selectProduct(result.data.producto);
+				popup.showSuccess(r?.message || 'Producto actualizado exitosamente');
+
+				const previousProduct = product;
+				const previousProductType = product.tipo;
+				const previousCategoryLabel = modelTypeToCategoryLabel[previousProductType];
+
+				if (r?.producto) {
+					selectProduct(r.producto);
 					changeDisplay('product');
 				}
-				await invalidateAll();
+
+				const newProduct = selectedProduct.product;
+				const newProductType = newProduct.tipo;
+				const newCategoryLabel = modelTypeToCategoryLabel[newProductType];
+
+				// Check structure
+				if (products.loadedTypes.has(newCategoryLabel)) {
+					console.log("NEW CATEGORY LABEL: ", newCategoryLabel)
+					products.loadedTypes.delete(newCategoryLabel);
+					await loadProductsByType(newCategoryLabel);
+				}
+				
+				if (
+					newCategoryLabel !== previousCategoryLabel &&
+					products.loadedTypes.has(previousCategoryLabel)
+				) {
+					console.log("PREVIOUS CATEGORY LABEL: ", previousCategoryLabel)
+					products.loadedTypes.delete(previousCategoryLabel);
+					await loadProductsByType(previousCategoryLabel);
+				} else {
+					console.log("PREVIOUS CATEGORY LABEL is the same: ", previousCategoryLabel)
+				}
 			}
 			app.loading = false;
 		};

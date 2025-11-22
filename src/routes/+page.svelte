@@ -1,17 +1,28 @@
 <script>
 	import { slide } from 'svelte/transition';
 
-	import { CloseButton, Buscar, Nuevo, Editar, Eliminar, Ingreso, Egreso, Display } from '$lib/components';
+	import {
+		CloseButton,
+		Buscar,
+		Nuevo,
+		Editar,
+		Eliminar,
+		Ingreso,
+		Egreso,
+		Display
+	} from '$lib/components';
 	import { search, add, packageExport, packageImport, fileSearch, dollar } from '$lib/icons';
 	import { products } from '$lib/shared/products.svelte';
 	import { currentDisplayed } from '$lib/shared/displayed.svelte.js';
 	import { app } from '$lib/shared/app.svelte.js';
+	import { formatTime } from '$lib/logic/utils.js';
 
 	let { data } = $props();
 
 	$effect(() => {
 		if (data.allProducts) {
-	products.allProducts = data.allProducts;
+			console.log('\n\n\nLoading products\n\n\n', formatTime(new Date()));
+			products.allProducts = data.allProducts;
 			products.filteredProducts = data.allProducts;
 		}
 	});

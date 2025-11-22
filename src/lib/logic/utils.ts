@@ -34,12 +34,28 @@ export function formatStockLogDate(date: Date) {
 }
 
 export function formatTime(date: Date) {
-	return date.toLocaleTimeString([], { 
-		hour: '2-digit', 
+	return date.toLocaleTimeString([], {
+		hour: '2-digit',
 		minute: '2-digit',
 		hour12: false
 	});
 }
+
+export const modelTypeToCategoryLabel = {
+	'radiador': 'Radiadores',
+	'panel': 'Paneles',
+	'electroventilador': 'Electroventiladores',
+	'calefactor': 'Calefactores',
+	'evaporador': 'Evaporadores',
+	'condensador': 'Condensadores',
+	'intercooler': 'Intercoolers',
+	'encauzador': 'Encauzadores',
+	'tanque-combustible': 'Tanques de combustible',
+	'compresor': 'Compresores',
+	'vaso-recuperador': 'Vasos recuperadores',
+	'enfriador-aceite': 'Enfriadores de aceite',
+	'otro': 'Otros'
+};
 
 
 
