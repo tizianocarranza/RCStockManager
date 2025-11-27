@@ -250,7 +250,6 @@ export const updateProduct = async (productData: any) => {
         const newModel = modelMap[normalizedTipo];
         const oldModel = modelMap[originalModelKey!];
         if (!newModel) {
-            console.log("\n\n", tipo, "\n\n");
             throw new Error("Tipo de producto no reconocido");
         }
 
@@ -272,7 +271,6 @@ export const updateProduct = async (productData: any) => {
     // --- If type didn't change: just update existing document ---
     const model = modelMap[normalizedTipo];
     if (!model) {
-        console.log("\n\n", tipo, "\n\n");
         throw new Error("Tipo de producto no reconocido");
     }
 

@@ -21,7 +21,6 @@
 
 	$effect(() => {
 		if (data.allProducts) {
-			console.log('\n\n\nLoading products\n\n\n', formatTime(new Date()));
 			products.allProducts = data.allProducts;
 			products.filteredProducts = data.allProducts;
 		}

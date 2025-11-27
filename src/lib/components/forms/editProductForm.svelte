@@ -64,7 +64,6 @@
 
 				// Check structure
 				if (products.loadedTypes.has(newCategoryLabel)) {
-					console.log("NEW CATEGORY LABEL: ", newCategoryLabel)
 					products.loadedTypes.delete(newCategoryLabel);
 					await loadProductsByType(newCategoryLabel);
 				}
@@ -73,11 +72,9 @@
 					newCategoryLabel !== previousCategoryLabel &&
 					products.loadedTypes.has(previousCategoryLabel)
 				) {
-					console.log("PREVIOUS CATEGORY LABEL: ", previousCategoryLabel)
 					products.loadedTypes.delete(previousCategoryLabel);
 					await loadProductsByType(previousCategoryLabel);
 				} else {
-					console.log("PREVIOUS CATEGORY LABEL is the same: ", previousCategoryLabel)
 				}
 			}
 			app.loading = false;
