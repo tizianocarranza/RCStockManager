@@ -33,7 +33,6 @@ type BaseProduct = {
 
 export async function load() {
 	// Only load radiadores initially for better performance
-	console.log("\n\n\nLoading products\n\n\n", formatTime(new Date()));
 	app.loading = true;
 	const radiadores = await getProductsByType('Radiadores');
 
