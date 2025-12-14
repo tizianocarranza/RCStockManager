@@ -27,14 +27,14 @@
 						<img
 							src={eyeOpen}
 							alt="Ocultar contraseña"
-							class="input-with-icon__icon"
+							class="input-with-icon__icon input-with-icon__button--small"
 							in:scale={{ start: 0.75, duration: 150 }}
 						/>
 					{:else}
 						<img
 							src={eyeClosed}
 							alt="Eye open icon"
-							class="input-with-icon__icon"
+							class="input-with-icon__icon input-with-icon__button--small"
 							in:scale={{ start: 0.75, duration: 150 }}
 						/>
 					{/if}

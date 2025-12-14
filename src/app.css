@@ -215,6 +215,10 @@ input:-webkit-autofill:active{
 	@apply h-full min-w-8 w-8 flex items-center p-1 box-border;
 }
 
+.input-with-icon__button--small {
+	@apply h-full min-w-7 w-7 flex items-center p-1 box-border;
+}
+
 .input-with-icon__icon {
 	@apply h-full w-full;
 }
