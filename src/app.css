@@ -337,3 +337,91 @@ input:-webkit-autofill:active{
 	}
 }
 
+
+
+.shining-header {
+	position: relative;
+	overflow: hidden;
+	color: transparent;
+	background-image: linear-gradient(
+		90deg,
+		#ffffff00 0%,
+		#ffffff40 20%,
+		#ffffffcc 50%,
+		#ffffff40 80%,
+		#ffffff00 100%
+	);
+	background-size: 200%;
+	background-position: -100% 0;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: 4px;
+	animation: shine-header 5s linear infinite;
+}
+
+@keyframes shine-header {
+	0% {
+		background-position: -100% 0;
+	}
+	100% {
+		background-position: 100% 0;
+	}
+}
+
+
+/* Last Updated watermark */
+.last-updated-watermark {
+	position: relative;
+	overflow: hidden;
+	color: transparent;
+	background-image: linear-gradient(to right,
+			rgba(255, 255, 255, 0.25) 0%,
+			rgba(255, 255, 255, 1) 10%,
+			rgba(255, 255, 255, 0.25) 20%);
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	-webkit-background-clip: text;
+	opacity: 0.08;
+	/* opacity: 0.08; */
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: 4px;
+	filter: brightness(0.75) blur(1px);
+	pointer-events: none;
+	user-select: none;
+	background-size: 250%;
+	background-position: -100% 0;
+	animation: shine-watermark 4s linear infinite;
+	transform-origin: center;
+}
+
+
+/* Breathing effect */
+@keyframes shine-watermark {
+	0% {
+		background-position: 100% 0;
+		opacity: 0.15;
+
+	}
+
+	30% {
+		background-position: -100% 0;
+		opacity: 0.25;
+
+	}
+
+	70% {
+		background-position: -100% 0;
+		opacity: 0.25;
+
+	}
+
+	100% {
+		background-position: -100% 0;
+		opacity: 0.15;
+
+	}
+}
