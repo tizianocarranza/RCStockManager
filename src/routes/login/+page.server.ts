@@ -11,7 +11,11 @@ export const actions = {
         console.log("login - password provided - ", password);
 
         if (password !== ADMIN_PASSWORD) {
-            return fail(401, { error: 'Contraseña incorrecta' });
+            return fail(401, { 
+                actionResult: {
+                    success: false,
+                    message: 'Contraseña incorrecta.'
+			}});
         }
 
         // Seteamos una cookie para marcar al admin
@@ -23,6 +27,13 @@ export const actions = {
         });
 
         // Redirigimos al administrador a la ruta principal
-        throw redirect(303, '/');
+        return {
+	actionResult: {
+		success: true,
+		message: 'Administrador identificado exitosamente'
+	}
+};
+
+
     },
 };

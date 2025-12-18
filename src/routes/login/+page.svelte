@@ -1,17 +1,50 @@
 <script>
+	import { enhance } from '$app/forms';
+	import { popup } from '$lib/stores/popup';
 	import { eyeClosed, eyeOpen, login } from '$lib/icons';
-	import { scale, fade, slide } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
+	import { app } from '$lib/shared/app.svelte';
+	import { goto } from '$app/navigation';
 
 	let show = false;
+
+	const handleSubmit = () => {
+		app.loading = true;
+
+		return async ({ result }) => {
+			try {
+				const r = result.data?.actionResult;
+
+				if (result.type === 'failure') {
+					popup.showError(r?.message || 'Error al autenticar administrador');
+				}
+
+				if (result.type === 'success') {
+					popup.showSuccess(r?.message || 'Administrador identificado exitosamente');
+					goto('/');
+				}
+			} catch {
+				popup.showError('Error inesperado');
+			} finally {
+				app.loading = false;
+			}
+		};
+	};
 </script>
 
 <main
 	class="relative flex flex-col gap-10 md:gap-15 xl:gap-20 items-center justify-center px-5 py-10 h-screen w-screen overflow-hidden text-white bg-animated-lights"
+	class:animate-loading={app.loading}
 >
-	<h1 class="shining-header text-3xl md:text-5xl xl:text-7xl text-wrap text-center w-full max-w-[600px]">Acceso de Administrador</h1>
+	<h1
+		class="shining-header text-3xl md:text-5xl xl:text-7xl text-wrap text-center w-full max-w-[600px]"
+	>
+		Acceso de Administrador
+	</h1>
 	<form
 		method="post"
 		class="flex flex-col items-center justify-center gap-10 border-custom rounded-md w-full"
+		use:enhance={handleSubmit}
 	>
 		<div class="flex items-center gap-4">
 			<div class="input-with-icon__container input-with-icon__container--large">
