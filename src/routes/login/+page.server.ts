@@ -27,13 +27,7 @@ export const actions = {
         });
 
         // Redirigimos al administrador a la ruta principal
-        return {
-	actionResult: {
-		success: true,
-		message: 'Administrador identificado exitosamente'
-	}
-};
-
-
+        throw redirect(303, '/');
+        
     },
 };

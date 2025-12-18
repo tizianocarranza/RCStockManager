@@ -1,10 +1,9 @@
 <script>
-	import { enhance } from '$app/forms';
+	import { enhance, applyAction } from '$app/forms';
 	import { popup } from '$lib/stores/popup';
 	import { eyeClosed, eyeOpen, login } from '$lib/icons';
 	import { scale } from 'svelte/transition';
 	import { app } from '$lib/shared/app.svelte';
-	import { goto } from '$app/navigation';
 
 	let show = false;
 
@@ -19,9 +18,10 @@
 					popup.showError(r?.message || 'Error al autenticar administrador');
 				}
 
-				if (result.type === 'success') {
-					popup.showSuccess(r?.message || 'Administrador identificado exitosamente');
-					goto('/');
+				if (result.type === 'redirect') {
+					popup.showSuccess('Administrador identificado exitosamente');
+					await applyAction(result);
+					return;
 				}
 			} catch {
 				popup.showError('Error inesperado');
