@@ -82,19 +82,20 @@ button {
 			'display'
 			'nuevo';
 	}
+
 	.sections-container--product-display {
 		grid-template-columns: repeat(2, 1fr);
 		grid-template-areas:
-		'buscar nuevo'
-		'display display'
-		'display display'
-		'display display'
-		'display display'
-		'display display'
-		'ingreso egreso'
-		'editar eliminar';
+			'buscar nuevo'
+			'display display'
+			'display display'
+			'display display'
+			'display display'
+			'display display'
+			'ingreso egreso'
+			'editar eliminar';
 	}
-	
+
 }
 
 .buscar {
@@ -108,6 +109,7 @@ button {
 .editar {
 	grid-area: editar;
 }
+
 .eliminar {
 	grid-area: eliminar;
 }
@@ -146,11 +148,18 @@ button {
 	animation: loading 500ms ease-in-out alternate infinite;
 }
 
+.animate-loading {
+	@apply pointer-events-none;
+	animation: loading 500ms ease-in-out alternate infinite;
+}
+
+
 @keyframes loading {
 	from {
 		transform: scale(1);
 		opacity: 100%;
 	}
+
 	to {
 		transform: scale(0.98);
 		opacity: 50%;
@@ -176,13 +185,13 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* Input */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: white;
-    transition: background-color 5000s ease-in-out 0s;
-    box-shadow: inset 0 0 20px 20px #23232329;
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: white;
+	transition: background-color 5000s ease-in-out 0s;
+	box-shadow: inset 0 0 20px 20px #23232329;
 }
 
 .input {
@@ -190,7 +199,7 @@ input:-webkit-autofill:active{
 }
 
 .input--large {
-	@apply max-w-60  md:max-w-80;
+	@apply max-w-60 md:max-w-80;
 }
 
 /* Input With Icon */
@@ -213,6 +222,10 @@ input:-webkit-autofill:active{
 
 .input-with-icon__button {
 	@apply h-full min-w-8 w-8 flex items-center p-1 box-border;
+}
+
+.input-with-icon__button--small {
+	@apply h-full min-w-7 w-7 flex items-center p-1 box-border;
 }
 
 .input-with-icon__icon {
@@ -240,9 +253,15 @@ input:-webkit-autofill:active{
 }
 
 @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
 }
+
 /* Number */
 
 
@@ -337,3 +356,90 @@ input:-webkit-autofill:active{
 	}
 }
 
+
+
+.shining-header {
+	position: relative;
+	overflow: hidden;
+	color: transparent;
+	background-image: linear-gradient(90deg,
+			#ffffff00 0%,
+			#ffffff40 20%,
+			#ffffffcc 50%,
+			#ffffff40 80%,
+			#ffffff00 100%);
+	background-size: 200%;
+	background-position: -100% 0;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: 4px;
+	animation: shine-header 5s linear infinite;
+}
+
+@keyframes shine-header {
+	0% {
+		background-position: -100% 0;
+	}
+
+	100% {
+		background-position: 100% 0;
+	}
+}
+
+
+/* Last Updated watermark */
+.last-updated-watermark {
+	position: relative;
+	overflow: hidden;
+	color: transparent;
+	background-image: linear-gradient(to right,
+			rgba(255, 255, 255, 0.25) 0%,
+			rgba(255, 255, 255, 1) 10%,
+			rgba(255, 255, 255, 0.25) 20%);
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	-webkit-background-clip: text;
+	opacity: 0.08;
+	/* opacity: 0.08; */
+	font-weight: 900;
+	font-style: italic;
+	letter-spacing: 4px;
+	filter: brightness(0.75) blur(1px);
+	pointer-events: none;
+	user-select: none;
+	background-size: 250%;
+	background-position: -100% 0;
+	animation: shine-watermark 4s linear infinite;
+	transform-origin: center;
+}
+
+
+/* Breathing effect */
+@keyframes shine-watermark {
+	0% {
+		background-position: 100% 0;
+		opacity: 0.15;
+
+	}
+
+	30% {
+		background-position: -100% 0;
+		opacity: 0.25;
+
+	}
+
+	70% {
+		background-position: -100% 0;
+		opacity: 0.25;
+
+	}
+
+	100% {
+		background-position: -100% 0;
+		opacity: 0.15;
+
+	}
+}
