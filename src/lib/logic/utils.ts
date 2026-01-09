@@ -54,7 +54,10 @@ export const modelTypeToCategoryLabel = {
 	'compresor': 'Compresores',
 	'vaso-recuperador': 'Vasos recuperadores',
 	'enfriador-aceite': 'Enfriadores de aceite',
-	'otro': 'Otros'
+	'otro': 'Otros',
+	'kit-distribucion': 'Kits de distribucion',
+	'bomba-agua': 'Bombas de agua',
+	'termostato': 'Termostatos'
 };
 
 
