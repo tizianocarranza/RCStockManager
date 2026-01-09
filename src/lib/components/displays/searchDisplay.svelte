@@ -18,6 +18,9 @@
 		...(products.filteredProducts["Compresores"] || []),
 		...(products.filteredProducts["Vasos recuperadores"] || []),
 		...(products.filteredProducts["Enfriadores de aceite"] || []),
+		...(products.filteredProducts["Bombas de agua"] || []),
+		...(products.filteredProducts["Kits de distribucion"] || []),
+		...(products.filteredProducts["Termostatos"] || []),
 		...(products.filteredProducts["Otros"] || [])
 	]);
 
