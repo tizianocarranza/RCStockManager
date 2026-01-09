@@ -17,6 +17,9 @@ import { Compresor as CompresorModel } from "$lib/server/models/Compresor";
 import { VasoRecuperador as VasoRecuperadorModel } from "$lib/server/models/VasoRecuperador";
 import { EnfriadorAceite as EnfriadorAceiteModel } from "$lib/server/models/EnfriadorAceite";
 import { Otro as OtroModel } from "$lib/server/models/Otro";
+import { KitDistribucion as KitDistribucionModel } from "$lib/server/models/KitDistribucion";
+import { BombaAgua as BombaAguaModel } from "$lib/server/models/BombaAgua";
+import { Termostato as TermostatoModel } from "$lib/server/models/Termostato";
 import { app } from "$lib/shared/app.svelte";
 
 type BaseProduct = {
@@ -46,6 +49,9 @@ export async function load() {
 		"Intercoolers": [],
 		"Encauzadores": [],
 		"Tanques de combustible": [],
+		"Kits de distribucion": [],
+		"Bombas de agua": [],
+		"Termostatos": [],
 		"Compresores": [],
 		"Vasos recuperadores": [],
 		"Enfriadores de aceite": [],
@@ -167,6 +173,15 @@ export const actions: Actions = {
 					break;
 				case 'tanque de combustible':
 					newProduct = await TanqueCombustibleModel.create({ ...base, tipo: 'tanque-combustible' });
+					break;
+				case 'kit de distribucion':
+					newProduct = await KitDistribucionModel.create({ ...base, tipo: 'kit-distribucion' });
+					break;
+				case 'bomba de agua':
+					newProduct = await BombaAguaModel.create({ ...base, tipo: 'bomba-agua' });
+					break;
+				case 'termostato':
+					newProduct = await TermostatoModel.create({ ...base, tipo: 'termostato' });
 					break;
 				case 'compresor':
 					newProduct = await CompresorModel.create({ ...base, tipo: 'compresor' });

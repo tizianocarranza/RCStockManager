@@ -13,7 +13,10 @@ import { Compresor as CompresorModel } from "./models/Compresor";
 import { VasoRecuperador as VasoRecuperadorModel } from "./models/VasoRecuperador";
 import { EnfriadorAceite as EnfriadorAceiteModel } from "./models/EnfriadorAceite";
 import { Otro as OtroModel } from "./models/Otro";
-import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite, Otro, Movimiento } from "$lib/types/types";
+import { KitDistribucion as KitDistribucionModel } from "./models/KitDistribucion";
+import { BombaAgua as BombaAguaModel } from "./models/BombaAgua";
+import { Termostato as TermostatoModel } from "./models/Termostato";
+import type { Products, Radiador, Panel, Electroventilador, Calefactor, Evaporador, Condensador, Intercooler, Encauzador, TanqueCombustible, Compresor, VasoRecuperador, EnfriadorAceite, Otro, Movimiento, KitDistribucion, BombaAgua, Termostato } from "$lib/types/types";
 
 
 export const typeMap: Record<string, string> = {
@@ -32,6 +35,11 @@ export const typeMap: Record<string, string> = {
 	'Enfriador de aceite': 'enfriador-aceite',
 	'Otro': 'otro',
 
+    // New singular
+    'Kit de distribucion': 'kit-distribucion',
+    'Bomba de agua': 'bomba-agua',
+    'Termostato': 'termostato',
+
 	// Plural
 	'Radiadores': 'radiador',
 	'Paneles': 'panel',
@@ -46,6 +54,10 @@ export const typeMap: Record<string, string> = {
 	'Vasos recuperadores': 'vaso-recuperador',
 	'Enfriadores de aceite': 'enfriador-aceite',
 	'Otros': 'otro',
+    // New plural
+    'Kits de distribucion': 'kit-distribucion',
+    'Bombas de agua': 'bomba-agua',
+    'Termostatos': 'termostato',
 };
 
 
@@ -65,6 +77,9 @@ export const modelMap: Record<string, any> = {
     'vaso-recuperador': VasoRecuperadorModel,
     'enfriador-aceite': EnfriadorAceiteModel,
     'otro': OtroModel,
+    'kit-distribucion': KitDistribucionModel,
+    'bomba-agua': BombaAguaModel,
+    'termostato': TermostatoModel,
 };
 
 
@@ -73,7 +88,7 @@ export const getAllProducts = async (): Promise<Products> => {
     await connectToDB();
 
     try {
-        const [radiadoresRaw, panelesRaw, electroventiladoresRaw, calefactoresRaw, evaporadoresRaw, condensadoresRaw, intercoolersRaw, encauzadoresRaw, tanquesCombustibleRaw, compresoresRaw, vasosRecuperadoresRaw, enfriadoresAceiteRaw, otrosRaw] = await Promise.all([
+        const [radiadoresRaw, panelesRaw, electroventiladoresRaw, calefactoresRaw, evaporadoresRaw, condensadoresRaw, intercoolersRaw, encauzadoresRaw, tanquesCombustibleRaw, compresoresRaw, vasosRecuperadoresRaw, enfriadoresAceiteRaw, otrosRaw, kitsDistribucionRaw, bombasAguaRaw, termostatosRaw] = await Promise.all([
             RadiadorModel.find().lean(),
             PanelModel.find().lean(),
             ElectroventiladorModel.find().lean(),
@@ -86,7 +101,10 @@ export const getAllProducts = async (): Promise<Products> => {
             CompresorModel.find().lean(),
             VasoRecuperadorModel.find().lean(),
             EnfriadorAceiteModel.find().lean(),
-            OtroModel.find().lean()
+            KitDistribucionModel.find().lean(),
+            BombaAguaModel.find().lean(),
+            TermostatoModel.find().lean(),
+            OtroModel.find().lean(),
         ]);
 
         return {
@@ -102,7 +120,10 @@ export const getAllProducts = async (): Promise<Products> => {
             "Compresores": toSerializableArray<Compresor>(compresoresRaw),
             "Vasos recuperadores": toSerializableArray<VasoRecuperador>(vasosRecuperadoresRaw),
             "Enfriadores de aceite": toSerializableArray<EnfriadorAceite>(enfriadoresAceiteRaw),
-            "Otros": toSerializableArray<Otro>(otrosRaw)
+            "Otros": toSerializableArray<Otro>(otrosRaw),
+            "Kits de distribucion": toSerializableArray<any>(kitsDistribucionRaw),
+            "Bombas de agua": toSerializableArray<any>(bombasAguaRaw),
+            "Termostatos": toSerializableArray<any>(termostatosRaw)
         };
         
     } catch (err) {
@@ -177,6 +198,15 @@ export const getProductById = async (
                 break;
             case "Otro":
                 product = await OtroModel.findById(id).lean<Otro>().exec();
+                break;
+            case "KitDistribucion":
+                product = await KitDistribucionModel.findById(id).lean().exec();
+                break;
+            case "BombaAgua":
+                product = await BombaAguaModel.findById(id).lean().exec();
+                break;
+            case "Termostato":
+                product = await TermostatoModel.findById(id).lean().exec();
                 break;
             default:
                 throw new Error("Tipo de producto no reconocido");
@@ -312,6 +342,12 @@ function getModelByTipo<T>(tipo: string): { model: import("mongoose").Model<T> }
             return { model: EnfriadorAceiteModel as import("mongoose").Model<T> };
         case "otro":
             return { model: OtroModel as import("mongoose").Model<T> };
+        case "kit-distribucion":
+            return { model: KitDistribucionModel as import("mongoose").Model<T> };
+        case "bomba-agua":
+            return { model: BombaAguaModel as import("mongoose").Model<T> };
+        case "termostato":
+            return { model: TermostatoModel as import("mongoose").Model<T> };
         default:
             throw new Error("Tipo de producto no reconocido");
     }

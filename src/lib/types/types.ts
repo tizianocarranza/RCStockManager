@@ -67,4 +67,11 @@ export type Products = {
   "Vasos recuperadores": VasoRecuperador[];
   "Enfriadores de aceite": EnfriadorAceite[];
   "Otros": Otro[];
+  "Kits de distribucion": KitDistribucion[];
+  "Bombas de agua": BombaAgua[];
+  "Termostatos": Termostato[];
 };
+
+export type KitDistribucion = BaseProduct & { tipo: "kit-distribucion" };
+export type BombaAgua = BaseProduct & { tipo: "bomba-agua" };
+export type Termostato = BaseProduct & { tipo: "termostato" };

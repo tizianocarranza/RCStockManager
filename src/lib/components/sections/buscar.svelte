@@ -42,6 +42,9 @@
 		'Intercoolers',
 		'Encauzadores',
 		'Tanques de combustible',
+		'Kits de distribucion',
+		'Bombas de agua',
+		'Termostatos',
 		'Compresores',
 		'Vasos recuperadores',
 		'Enfriadores de aceite'
