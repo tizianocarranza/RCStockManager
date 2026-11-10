@@ -42,7 +42,9 @@ export type Stats = {
 	};
 };
 
-const FORMAT: Record<Bucket, string> = { day: '%Y-%m-%d', week: '%Y-%m-%d', month: '%Y-%m' };
+const FORMAT: Record<Bucket, string> = {
+	hour: '%Y-%m-%dT%H',
+	day: '%Y-%m-%d', week: '%Y-%m-%d', month: '%Y-%m' };
 
 const topPipeline = (kind: 'ingreso' | 'egreso'): PipelineStage.FacetPipelineStage[] => [
 	{ $match: { kind } },
