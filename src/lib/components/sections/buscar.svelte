@@ -15,6 +15,7 @@
 	import { selectProduct } from '$lib/logic/products';
 	import { products } from '$lib/shared/products.svelte';
 	import { currentDisplayed } from '$lib/shared/displayed.svelte';
+	import { PLURAL_LABELS } from '$lib/logic/productTypes';
 
 	const handleRefreshClick = async () => {
 		app.loading = true;
@@ -32,23 +33,7 @@
 		}
 	};
 
-	const filterOptions = [
-		'Radiadores',
-		'Paneles',
-		'Electroventiladores',
-		'Calefactores',
-		'Evaporadores',
-		'Condensadores',
-		'Intercoolers',
-		'Encauzadores',
-		'Tanques de combustible',
-		'Kits de distribucion',
-		'Bombas de agua',
-		'Termostatos',
-		'Compresores',
-		'Vasos recuperadores',
-		'Enfriadores de aceite'
-	];
+	const filterOptions = PLURAL_LABELS;
 
 	const handleFilterButtonClick = () => {
 		changeDisplay('search');

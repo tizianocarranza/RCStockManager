@@ -9,7 +9,9 @@
 	import { selectedProduct, products } from '$lib/shared/products.svelte';
 	import { modelTypeToCategoryLabel } from '$lib/logic/utils';
 	import { loadProductsByType } from '$lib/logic/lazyLoading';
+	import { SINGULAR_LABELS, resolveTipo, singularOf } from '$lib/logic/productTypes';
 	let selectedType = $state('');
+	let selectedSlug = $derived(resolveTipo(selectedType));
 
 	function handleSubmit() {
 		app.loading = true;
@@ -42,10 +44,10 @@
 
 <div class="h-full w-full flex flex-col p-5 gap-10" in:slide>
 	<h1 class="hidden lg:inline-block p-2 pb-5 border-b text-4xl">
-		Nuevo {selectedType === 'Radiador' ||
-		selectedType === 'Electroventilador' ||
-		selectedType === 'Panel'
-			? selectedType
+		Nuevo {selectedSlug === 'radiador' ||
+		selectedSlug === 'electroventilador' ||
+		selectedSlug === 'panel'
+			? singularOf(selectedSlug)
 			: 'Producto'}
 	</h1>
 	<form
@@ -66,22 +68,9 @@
 					required
 				/>
 				<datalist id="types">
-					<option value="Radiador">Radiador</option>
-					<option value="Panel">Panel</option>
-					<option value="Electroventilador">Electroventilador</option>
-					<option value="Calefactor">Calefactor</option>
-					<option value="Evaporador">Evaporador</option>
-					<option value="Condensador">Condensador</option>
-					<option value="Intercooler">Intercooler</option>
-					<option value="Encauzador">Encauzador</option>
-					<option value="Tanque de combustible">Tanque de combustible</option>
-					<option value="Kit de distribucion">Kit de distribucion</option>
-					<option value="Bomba de agua">Bomba de agua</option>
-					<option value="Termostato">Termostato</option>
-					<option value="Compresor">Compresor</option>
-					<option value="Vaso recuperador">Vaso recuperador</option>
-					<option value="Enfriador de aceite">Enfriador de aceite</option>
-					<option value="Otro">Otro</option>
+					{#each SINGULAR_LABELS as label (label)}
+						<option value={label}>{label}</option>
+					{/each}
 				</datalist>
 			</div>
 			<input class="input input--large" placeholder="Detalle" name="detalle" required />
@@ -94,7 +83,7 @@
 				<option value="Cobre y bronce">Cobre y bronce</option>
 				<option value="Brazado">Brazado</option>
 			</datalist>
-			{#if selectedType === 'Radiador' || selectedType === 'Panel'}
+			{#if selectedSlug === 'radiador' || selectedSlug === 'panel'}
 				<div class="flex flex-col gap-10">
 					<input
 						class="input input--large"
@@ -111,7 +100,7 @@
 					</div>
 				</div>
 			{/if}
-			{#if selectedType === 'Panel'}
+			{#if selectedSlug === 'panel'}
 				<datalist id="filas">
 					<option value="Supertubular">Supertubular</option>
 					<option value="Aletado">Aletado</option>
@@ -131,7 +120,7 @@
 						list="filas"
 					/>
 				</div>
-			{:else if selectedType === 'Electroventilador'}
+			{:else if selectedSlug === 'electroventilador'}
 				<div class="flex gap-5" transition:slide>
 					<input class="input input--large" placeholder="Diametro" name="diametro" type="number" />
 					<input

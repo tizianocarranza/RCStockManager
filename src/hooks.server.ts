@@ -1,21 +1,22 @@
-import { Handle } from '@sveltejs/kit';
-import { ADMIN_PASSWORD } from '$env/static/private';
+import { json, redirect, type Handle } from '@sveltejs/kit';
+import { SESSION_COOKIE, verifySession } from '$lib/server/auth';
 
 export const handle: Handle = async ({ event, resolve }) => {
-    // Verificamos si la cookie 'admin' está seteada
-    const isAdmin = event.cookies.get('admin') === 'true';
+	const isAdmin = await verifySession(event.cookies.get(SESSION_COOKIE));
+	const { pathname } = event.url;
 
-    // Si el usuario no es admin y no está logueado, lo redirigimos al login
-    if (!isAdmin) {
-        // Verificamos si está accediendo a la página de login
-        if (event.url.pathname !== '/login') {
-            return new Response(null, {
-                status: 302,
-                headers: { Location: '/login' },
-            });
-        }
-    }
+	if (pathname === '/login') {
+		// Ya logueado: no mostrar el login (salvo para cerrar sesión)
+		if (isAdmin && event.request.method === 'GET') redirect(303, '/');
+		return resolve(event);
+	}
 
-    // Resolvemos la petición normalmente si es admin
-    return resolve(event);
+	if (!isAdmin) {
+		if (pathname.startsWith('/api/')) {
+			return json({ error: 'No autorizado' }, { status: 401 });
+		}
+		redirect(303, '/login');
+	}
+
+	return resolve(event);
 };

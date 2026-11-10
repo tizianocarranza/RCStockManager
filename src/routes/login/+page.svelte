@@ -43,6 +43,7 @@
 	</h1>
 	<form
 		method="post"
+		action="?/login"
 		class="flex flex-col items-center justify-center gap-10 border-custom rounded-md w-full"
 		use:enhance={handleSubmit}
 	>

@@ -24,22 +24,6 @@
 		}
 	};
 
-	// Map UI labels to product collection keys
-	const filterLabelToKey = {
-		Radiadores: 'radiadores',
-		Paneles: 'paneles',
-		Electroventiladores: 'electroventiladores',
-		Calefactores: 'calefactores',
-		Evaporadores: 'evaporadores',
-		Condensadores: 'condensadores',
-		Intercoolers: 'intercoolers',
-		Encauzadores: 'encauzadores',
-		'Tanques de combustible': 'tanquesCombustible',
-		Compresores: 'compresores',
-		'Vasos recuperadores': 'vasosRecuperadores',
-		'Enfriadores de aceite': 'enfriadoresAceite'
-	};
-
 	// Filter function (applies text search and type filter)
 	const filterProducts = (allProducts) => {
 		const query = userSearch.toLowerCase();

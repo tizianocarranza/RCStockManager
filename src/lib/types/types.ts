@@ -1,10 +1,14 @@
+import type { ProductTypeDef } from '$lib/logic/productTypes';
+
 export type Movimiento = {
   fecha: Date;
   cantidad: number;
 };
 
 export type BaseProduct = {
+  _id?: string;
   codigo?: string;
+  marca?: string;
   detalle?: string;
   cantidad: number;
   notas?: string;
@@ -56,21 +60,25 @@ export type Termostato = BaseProduct & { tipo: "termostato" };
 export type Otro = BaseProduct & { tipo: "otro" };
 
 
+export type Product =
+  | Radiador
+  | Panel
+  | Electroventilador
+  | Calefactor
+  | Evaporador
+  | Condensador
+  | Intercooler
+  | Encauzador
+  | TanqueCombustible
+  | Compresor
+  | VasoRecuperador
+  | EnfriadorAceite
+  | KitDistribucion
+  | BombaAgua
+  | Termostato
+  | Otro;
+
+/** Productos agrupados por etiqueta plural (ver `PRODUCT_TYPES`). */
 export type Products = {
-  "Radiadores": Radiador[];
-  "Paneles": Panel[];
-  "Electroventiladores": Electroventilador[];
-  "Calefactores": Calefactor[];
-  "Evaporadores": Evaporador[];
-  "Condensadores": Condensador[];
-  "Intercoolers": Intercooler[];
-  "Encauzadores": Encauzador[];
-  "Tanques de combustible": TanqueCombustible[];
-  "Compresores": Compresor[];
-  "Vasos recuperadores": VasoRecuperador[];
-  "Enfriadores de aceite": EnfriadorAceite[];
-  "Otros": Otro[];
-  "Kits de distribucion": KitDistribucion[];
-  "Bombas de agua": BombaAgua[];
-  "Termostatos": Termostato[];
+  [K in ProductTypeDef as K['plural']]: Extract<Product, { tipo: K['slug'] }>[];
 };
