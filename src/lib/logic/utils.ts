@@ -1,7 +1,5 @@
-export function capitalize(str: string) {
-	if (!str) return '';
-	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
+import { PRODUCT_TYPES } from './productTypes';
+
 
 /**
  * Creates a debounced function that delays invoking the provided function
@@ -41,26 +39,7 @@ export function formatTime(date: Date) {
 	});
 }
 
-export const modelTypeToCategoryLabel = {
-	'radiador': 'Radiadores',
-	'panel': 'Paneles',
-	'electroventilador': 'Electroventiladores',
-	'calefactor': 'Calefactores',
-	'evaporador': 'Evaporadores',
-	'condensador': 'Condensadores',
-	'intercooler': 'Intercoolers',
-	'encauzador': 'Encauzadores',
-	'tanque-combustible': 'Tanques de combustible',
-	'compresor': 'Compresores',
-	'vaso-recuperador': 'Vasos recuperadores',
-	'enfriador-aceite': 'Enfriadores de aceite',
-	'otro': 'Otros',
-	'kit-distribucion': 'Kits de distribucion',
-	'bomba-agua': 'Bombas de agua',
-	'termostato': 'Termostatos'
-};
-
-
-
-
-
+/** slug de tipo ('tanque-combustible') → etiqueta plural ('Tanques de combustible') */
+export const modelTypeToCategoryLabel = Object.fromEntries(
+	PRODUCT_TYPES.map((t) => [t.slug, t.plural])
+) as Record<string, string>;

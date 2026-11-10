@@ -9,41 +9,11 @@
 	import { selectedProduct, products } from '$lib/shared/products.svelte';
 	import { modelTypeToCategoryLabel } from '$lib/logic/utils';
 	import { loadProductsByType } from '$lib/logic/lazyLoading';
+	import { SINGULAR_LABELS, resolveTipo, singularOf } from '$lib/logic/productTypes';
 
 	let product = selectedProduct.product;
-	let selectedType = $state(
-		product.tipo === 'radiador'
-			? 'Radiador'
-			: product.tipo === 'panel'
-				? 'Panel'
-				: product.tipo === 'electroventilador'
-					? 'Electroventilador'
-					: product.tipo === 'calefactor'
-						? 'Calefactor'
-						: product.tipo === 'evaporador'
-							? 'Evaporador'
-							: product.tipo === 'condensador'
-								? 'Condensador'
-								: product.tipo === 'intercooler'
-									? 'Intercooler'
-									: product.tipo === 'encauzador'
-										? 'Encauzador'
-											: product.tipo === 'tanque-combustible'
-											? 'Tanque de combustible'
-												: product.tipo === 'kit-distribucion'
-													? 'Kit de distribucion'
-													: product.tipo === 'bomba-agua'
-														? 'Bomba de agua'
-														: product.tipo === 'termostato'
-															? 'Termostato'
-											: product.tipo === 'compresor'
-												? 'Compresor'
-												: product.tipo === 'vaso-recuperador'
-													? 'Vaso recuperador'
-													: product.tipo === 'enfriador-aceite'
-														? 'Enfriador de aceite'
-														: 'Otro'
-	);
+	let selectedType = $state(singularOf(product.tipo) ?? 'Otro');
+	let selectedSlug = $derived(resolveTipo(selectedType));
 
 	function handleSubmit() {
 		app.loading = true;
@@ -100,6 +70,7 @@
 		use:enhance={handleSubmit}
 	>
 		<input type="hidden" name="id" value={product._id} />
+		<input type="hidden" name="originalTipo" value={product.tipo} />
 
 		<div class="flex flex-col gap-10 h-full flex-wrap">
 			<div class="flex gap-5">
@@ -119,22 +90,9 @@
 					required
 				/>
 				<datalist id="types">
-					<option value="Radiador">Radiador</option>
-					<option value="Panel">Panel</option>
-					<option value="Electroventilador">Electroventilador</option>
-					<option value="Calefactor">Calefactor</option>
-					<option value="Evaporador">Evaporador</option>
-					<option value="Condensador">Condensador</option>
-					<option value="Intercooler">Intercooler</option>
-					<option value="Encauzador">Encauzador</option>
-					<option value="Tanque de combustible">Tanque de combustible</option>
-					<option value="Kit de distribucion">Kit de distribucion</option>
-					<option value="Bomba de agua">Bomba de agua</option>
-					<option value="Termostato">Termostato</option>
-					<option value="Compresor">Compresor</option>
-					<option value="Vaso recuperador">Vaso recuperador</option>
-					<option value="enfriador">Enfriador de aceite</option>
-					<option value="Otro">Otro</option>
+					{#each SINGULAR_LABELS as label (label)}
+						<option value={label}>{label}</option>
+					{/each}
 				</datalist>
 			</div>
 
@@ -164,7 +122,7 @@
 				<option value="Brazado">Brazado</option>
 			</datalist>
 
-			{#if selectedType === 'Radiador' || selectedType === 'Panel'}
+			{#if selectedSlug === 'radiador' || selectedSlug === 'panel'}
 				<input
 					class="input input--large"
 					placeholder="Material"
@@ -199,7 +157,7 @@
 				</div>
 			{/if}
 
-			{#if selectedType === 'Panel'}
+			{#if selectedSlug === 'panel'}
 				<datalist id="filas">
 					<option value="Supertubular">Supertubular</option>
 					<option value="Aletado">Aletado</option>
@@ -221,7 +179,7 @@
 						value={product.filas?.tipo}
 					/>
 				</div>
-			{:else if selectedType === 'Electroventilador'}
+			{:else if selectedSlug === 'electroventilador'}
 				<div class="flex gap-5" transition:slide>
 					<input
 						class="input input--large"

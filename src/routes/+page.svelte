@@ -59,4 +59,14 @@
 
 		<!-- <section class="section estadisticas"></section> -->
 	</div>
+
+	<form method="post" action="/login?/logout" class="absolute right-2 bottom-1 z-10">
+		<button
+			type="submit"
+			class="rounded-full px-3 py-0.5 text-xs opacity-50 transition-opacity hover:opacity-100"
+			title="Cerrar sesión"
+		>
+			Cerrar sesión
+		</button>
+	</form>
 </main>

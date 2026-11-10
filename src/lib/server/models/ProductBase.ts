@@ -1,4 +1,5 @@
 import mongoosePkg from 'mongoose';
+import { TIPO_SLUGS } from '$lib/logic/productTypes';
 
 const { Schema } = mongoosePkg;
 
@@ -16,24 +17,7 @@ export const ProductBaseSchema = new Schema(
     tipo: {
       type: String,
       required: true,
-      enum: [
-        'radiador',
-        'panel',
-        'electroventilador',
-        'calefactor',
-        'evaporador',
-        'condensador',
-        'intercooler',
-        'encauzador',
-        'tanque-combustible',
-        'kit-distribucion',
-        'bomba-agua',
-        'termostato',
-        'compresor',
-        'vaso-recuperador',
-        'enfriador-aceite',
-        'otro',
-      ],
+      enum: TIPO_SLUGS,
     },
     cantidad: { type: Number, required: true, default: 0 },
     dimensiones: {
