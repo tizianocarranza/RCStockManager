@@ -47,7 +47,7 @@ button {
 	grid-template-columns: repeat(4, 1fr);
 	grid-template-rows: repeat(6, 1fr);
 	grid-template-areas:
-		"buscar buscar buscar nuevo"
+		"buscar buscar estadisticas nuevo"
 		"display display display display"
 		"display display display display"
 		"display display display display"
@@ -59,7 +59,7 @@ button {
 
 .sections-container--product-display {
 	grid-template-areas:
-		"buscar buscar buscar nuevo"
+		"buscar buscar estadisticas nuevo"
 		"display display display display"
 		"display display display display"
 		"display display display display"
@@ -71,29 +71,29 @@ button {
 @media (max-width: 768px) {
 	.sections-container {
 		grid-template-rows: repeat(8, 1fr);
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(2, 1fr);
 		grid-template-areas:
-			'buscar'
-			'display'
-			'display'
-			'display'
-			'display'
-			'display'
-			'display'
-			'nuevo';
+			'buscar buscar'
+			'display display'
+			'display display'
+			'display display'
+			'display display'
+			'display display'
+			'display display'
+			'estadisticas nuevo';
 	}
 
 	.sections-container--product-display {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(4, 1fr);
 		grid-template-areas:
-			'buscar nuevo'
-			'display display'
-			'display display'
-			'display display'
-			'display display'
-			'display display'
-			'ingreso egreso'
-			'editar eliminar';
+			'buscar buscar estadisticas nuevo'
+			'display display display display'
+			'display display display display'
+			'display display display display'
+			'display display display display'
+			'display display display display'
+			'ingreso ingreso egreso egreso'
+			'editar editar eliminar eliminar';
 	}
 
 }

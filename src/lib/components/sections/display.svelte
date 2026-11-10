@@ -4,7 +4,8 @@
 		NewProductForm,
 		EditProductForm,
 		SearchDisplay,
-		ProductDisplay
+		ProductDisplay,
+		StatsDisplay
 	} from '$lib/components';
 	import { formatTime } from '$lib/logic/utils';
 	import { app } from '$lib/shared/app.svelte';
@@ -27,7 +28,7 @@
 		{:else if currentDisplayed.edit}
 			<EditProductForm />
 		{:else if currentDisplayed.stats}
-			<p>stats</p>
+			<StatsDisplay />
 		{/if}
 	</div>
 </section>

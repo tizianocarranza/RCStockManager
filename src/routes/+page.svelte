@@ -9,7 +9,8 @@
 		Eliminar,
 		Ingreso,
 		Egreso,
-		Display
+		Display,
+		Estadisticas
 	} from '$lib/components';
 	import { search, add, packageExport, packageImport, fileSearch, dollar } from '$lib/icons';
 	import { products } from '$lib/shared/products.svelte';
@@ -41,6 +42,9 @@
 	>
 		<!-- Buscar Section -->
 		<Buscar />
+
+		<!-- Estadisticas Section -->
+		<Estadisticas />
 
 		<!-- Nuevo Section -->
 		<Nuevo />

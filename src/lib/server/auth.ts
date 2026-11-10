@@ -25,7 +25,7 @@ const toB64Url = (buf: ArrayBuffer) =>
 		.replace(/\//g, '_')
 		.replace(/=+$/, '');
 
-const fromB64Url = (s: string): Uint8Array | null => {
+const fromB64Url = (s: string): Uint8Array<ArrayBuffer> | null => {
 	try {
 		const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
 		return Uint8Array.from(bin, (c) => c.charCodeAt(0));
