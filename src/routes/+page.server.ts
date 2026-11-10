@@ -5,8 +5,10 @@ import {
 	updateProduct,
 	increaseProductQuantity,
 	decreaseProductQuantity,
-	deleteProduct
+	deleteProduct,
+	SinStockError
 } from '$lib/server/data';
+import { logMovimiento } from '$lib/server/movimientos';
 import { parseAmount, parseProductForm } from '$lib/server/forms';
 import { modelBySlug } from '$lib/server/models';
 import { connectToDB } from '$lib/server/db/db';
@@ -40,6 +42,13 @@ export const actions: Actions = {
 		try {
 			await connectToDB();
 			const newProduct = await modelBySlug[tipo].create({ ...parsed.fields, tipo });
+			await logMovimiento({
+				product: newProduct,
+				tipo,
+				kind: 'ajuste',
+				cantidad: newProduct.cantidad,
+				motivo: 'alta'
+			});
 			return succeed('Producto creado exitosamente.', newProduct);
 		} catch (error) {
 			console.error('Error al crear el producto:', error);
@@ -97,8 +106,14 @@ export const actions: Actions = {
 
 		try {
 			const { producto } = await decreaseProductQuantity(id, tipo, amount);
-			return succeed(`Stock reducido en ${amount} unidades.`, producto);
+			const retirado = producto.ultimoEgreso.cantidad;
+			const message =
+				retirado < amount
+					? `Solo había ${retirado} en stock: se retiraron ${retirado} unidades.`
+					: `Stock reducido en ${retirado} unidades.`;
+			return succeed(message, producto);
 		} catch (error) {
+			if (error instanceof SinStockError) return failWith(400, error.message);
 			console.error('Error al reducir stock:', error);
 			return failWith(500, 'No se pudo reducir la cantidad.');
 		}

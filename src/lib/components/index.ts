@@ -13,6 +13,7 @@ export { default as EditProductForm } from "./forms/editProductForm.svelte";
 
 export { default as SearchDisplay } from "./displays/searchDisplay.svelte";
 export { default as ProductDisplay } from "./displays/productDisplay.svelte";
+export { default as StatsDisplay } from "./displays/statsDisplay.svelte";
 
 
 export { default as Buscar } from "./sections/buscar.svelte"
@@ -22,5 +23,8 @@ export { default as Egreso } from "./sections/egreso.svelte"
 export { default as Editar } from "./sections/editar.svelte"
 export { default as Eliminar } from "./sections/eliminar.svelte"
 export { default as Display } from "./sections/display.svelte"
+export { default as Estadisticas } from "./sections/estadisticas.svelte"
+
+export { default as Chart } from "./charts/Chart.svelte";
 
 export { default as InformationPopup } from "./InformationPopup.svelte";

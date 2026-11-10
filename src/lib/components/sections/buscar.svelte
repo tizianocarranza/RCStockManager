@@ -16,10 +16,12 @@
 	import { products } from '$lib/shared/products.svelte';
 	import { currentDisplayed } from '$lib/shared/displayed.svelte';
 	import { PLURAL_LABELS } from '$lib/logic/productTypes';
+	import { statsState } from '$lib/shared/stats.svelte';
 
 	const handleRefreshClick = async () => {
 		app.loading = true;
 		await invalidateAll(); // Revalidate all data
+		if (currentDisplayed.stats) statsState.version++;
 		try {
 			products.loadedTypes = new Set();
 			await loadProductsByType(filters.selectedFilter);
