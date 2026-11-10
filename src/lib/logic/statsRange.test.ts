@@ -73,7 +73,40 @@ describe('bucketKeys / fillBuckets', () => {
 	});
 });
 
+describe('hoy (today, by hour)', () => {
+	it('starts at local midnight today and groups by hour', () => {
+		const r = parseRange('hoy', NOW);
+		expect(r.from?.toISOString()).toBe('2026-03-15T03:00:00.000Z'); // 15/03 00:00 ART
+		expect(r.bucket).toBe('hour');
+		expect(bucketFor(1)).toBe('hour');
+	});
+
+	it('keys hours in Argentina time', () => {
+		// 13:40 UTC = 10:40 ART
+		expect(bucketKey(new Date('2026-03-15T13:40:00Z'), 'hour')).toBe('2026-03-15T10');
+	});
+
+	it('lists every hour from midnight up to the current hour', () => {
+		const { from, to } = parseRange('hoy', NOW); // ahora 10:00 ART
+		const keys = bucketKeys(from!, to, 'hour');
+		expect(keys).toHaveLength(11);
+		expect(keys[0]).toBe('2026-03-15T00');
+		expect(keys.at(-1)).toBe('2026-03-15T10');
+	});
+
+	it('fills empty hours with zeros', () => {
+		const { from, to } = parseRange('hoy', NOW);
+		const filled = fillBuckets([{ key: '2026-03-15T09', ingreso: 0, egreso: 3 }], from!, to, 'hour');
+		expect(filled[9]).toEqual({ key: '2026-03-15T09', ingreso: 0, egreso: 3 });
+		expect(filled[8]).toEqual({ key: '2026-03-15T08', ingreso: 0, egreso: 0 });
+	});
+});
+
 describe('bucketLabel', () => {
+	it('formats hours', () => {
+		expect(bucketLabel('2026-03-15T09', 'hour')).toBe('09:00');
+	});
+
 	it('formats per bucket', () => {
 		expect(bucketLabel('2026-03-14', 'day')).toBe('14/03');
 		expect(bucketLabel('2026-03-09', 'week')).toBe('sem 09/03');

@@ -45,7 +45,9 @@
 	});
 
 	const fmt = (n) => (n ?? 0).toLocaleString('es-AR');
-	const rangeLabel = $derived(RANGES.find((r) => r.key === statsState.range)?.label ?? '');
+	const BUCKET_NAMES = { hour: 'hora', day: 'día', week: 'semana', month: 'mes' };
+	const currentRange = $derived(RANGES.find((r) => r.key === statsState.range));
+	const rangeLabel = $derived(currentRange?.label ?? '');
 	const hayMovimientos = $derived((stats?.totales.movimientos ?? 0) > 0);
 
 	const chartData = $derived(
@@ -239,11 +241,7 @@
 			<div class="flex flex-col gap-3 rounded-xl bg-white/5 p-4">
 				<div class="flex flex-wrap items-center justify-between gap-2">
 					<h3 class="text-sm font-semibold">
-						Ingresos y egresos por {stats.range.bucket === 'day'
-							? 'día'
-							: stats.range.bucket === 'week'
-								? 'semana'
-								: 'mes'}
+						Ingresos y egresos por {BUCKET_NAMES[stats.range.bucket]}
 					</h3>
 					<div class="flex gap-4 text-xs font-normal">
 						<span class="flex items-center gap-1.5">
@@ -334,9 +332,7 @@
 				)}
 				{@render productList(
 					'Sin rotación',
-					`${fmt(stats.stock.sinRotacion.total)} productos con stock y sin egresos en ${
-						statsState.range === 'all' ? 'todo el historial' : rangeLabel
-					}`,
+					`${fmt(stats.stock.sinRotacion.total)} productos con stock y sin egresos ${currentRange?.phrase ?? ''}`,
 					stats.stock.sinRotacion.items,
 					(p) => fmt(p.cantidad)
 				)}
